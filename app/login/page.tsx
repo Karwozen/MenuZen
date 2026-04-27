@@ -18,6 +18,12 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
+    if (!isSupabaseConfigured) {
+      setError("As chaves de API do Supabase não foram encontradas no ambiente. Configure o arquivo .env.local ou as variáveis do servidor.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
