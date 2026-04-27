@@ -53,18 +53,32 @@ export default function CardapioPage() {
 
     try {
       setLoadingInitial(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      let user = session?.user || null;
+      
+      if (!user) {
+        const authData = await supabase.auth.getUser();
+        user = authData.data.user;
+      }
+
+      if (!user) {
+        console.error("Nenhum usuário logado encontrado na sessão atual.");
+        return;
+      }
+      
+      console.log("Iniciando busca para o usuário:", user.id);
 
       // Buscar ID do restaurante
       const { data: restData, error: restError } = await supabase
         .from("restaurantes")
-        .select("id")
+        .select("*")
         .eq("owner_id", user.id)
         .single();
 
       if (restError) {
-        console.error("Erro do Supabase:", restError.message, restError.details);
+        console.error("Erro detalhado:", restError.message, restError.details);
         showFeedback('error', 'Erro ao carregar seu restaurante. Contate o suporte.');
         return;
       }
@@ -72,33 +86,24 @@ export default function CardapioPage() {
       const rId = restData?.id;
       if (!rId) return;
 
+      console.log("Restaurante ID encontrado:", rId);
       setRestauranteId(rId);
 
       const [catRes, prodRes] = await Promise.all([
         supabase.from("categorias").select("*").eq("restaurante_id", rId).order('created_at', { ascending: true }),
-        supabase.from("produtos").select("*").in('categoria_id', (
-           // Para pegar os produtos, buscamos os que pertecem às categorias deste restaurante, 
-           // ou se produtos tiver restaurante_id, usaríamos ele. Como a modelagem costuma vincular
-           // produtos à categoria, vamos trazer os produtos se tivermos as categorias depois.
-           // Assumiremos que a tabela produtos também tem restaurante_id para simplificar, 
-           // se não tiver a API vai reclamar. Vamos tentar sem restaurante_id e ao invés disso
-           // buscar todos assim que tivermos as categorias.
-           [] // Placeholder, vamos fazer via inner select se der mas Supabase não suporta in-array nativo assim facilmente no SDK
-        )) // we will fetch products later
+        supabase.from("produtos").select("*").eq("restaurante_id", rId).order('created_at', { ascending: true })
       ]);
 
       let catList = catRes.data || [];
+      if (catList.length === 0) {
+        console.log("Busca concluída: nenhum item encontrado para o restaurante:", rId);
+      }
       setCategorias(catList);
 
+      let pData = prodRes.data || [];
+      setProdutos(pData);
+
       if (catList.length > 0) {
-        const catIds = catList.map(c => c.id);
-        const { data: pData } = await supabase
-          .from("produtos")
-          .select("*")
-          .in('categoria_id', catIds)
-          .order('created_at', { ascending: true });
-          
-        if (pData) setProdutos(pData);
         setNovoProdCat(catList[0].id);
       }
 
@@ -462,20 +467,20 @@ export default function CardapioPage() {
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {catProducts.map(produto => (
-                            <div key={produto.id} className="bg-white/5 border border-white/10 rounded-xl flex overflow-hidden hover:bg-white/10 transition-colors group">
+                            <div key={produto.id} className="bg-white/5 border border-white/10 rounded-xl flex flex-col overflow-hidden hover:bg-white/10 transition-colors group">
                               {/* Imagem do Produto */}
                               {produto.imagem_url ? (
-                                <div className="w-24 shrink-0 bg-black overflow-hidden border-r border-white/5">
+                                <div className="w-full h-40 bg-black overflow-hidden border-b border-white/5">
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img 
                                     src={produto.imagem_url} 
                                     alt={produto.nome}
-                                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-500"
+                                    className="w-full h-40 object-cover rounded-t-xl opacity-90 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-500"
                                   />
                                 </div>
                               ) : (
-                                <div className="w-24 shrink-0 bg-white/5 border-r border-white/5 flex items-center justify-center text-slate-600">
-                                   <ImageIcon className="w-6 h-6" />
+                                <div className="w-full h-40 bg-white/5 border-b border-white/5 flex items-center justify-center text-slate-600">
+                                   <ImageIcon className="w-8 h-8" />
                                 </div>
                               )}
                               
