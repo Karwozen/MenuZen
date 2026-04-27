@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, ArrowRight } from "lucide-react";
 
 export function PreRegisterForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
@@ -36,56 +36,64 @@ export function PreRegisterForm() {
   };
 
   return (
-    <section id="pre-cadastro" className="py-24 relative overflow-hidden">
+    <section id="pre-cadastro" className="py-32 relative overflow-hidden">
+      <div className="absolute inset-0 bg-indigo-900/10 backdrop-blur-3xl -z-10"></div>
+      {/* Decorative patterns */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 blur-[120px] -z-10"></div>
+
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
           
           <div>
-            <h2 className="text-3xl font-extrabold sm:text-4xl mb-4 text-white">
+            <h2 className="text-4xl font-black tracking-tight text-white md:text-5xl mb-6">
               Pronto para escalar as vendas do seu negócio?
             </h2>
-            <p className="text-slate-400 text-lg mb-8">
-              Faça seu pré-cadastro agora. Crie sua conta gratuitamente e libere seu cardápio digital em menos de 5 minutos.
+            <p className="text-slate-400 text-lg mb-10 leading-relaxed font-light">
+              Faça seu pré-cadastro agora. Crie sua conta gratuitamente e libere seu cardápio digital em menos de 5 minutos, sem cartão de crédito.
             </p>
 
-            <ul className="space-y-4">
+            <ul className="space-y-6">
               {[
-                "Setup em menos de 5 minutos.",
-                "Não cobramos comissão por venda.",
-                "Testes gratuitos por 7 dias."
+                "Setup simplificado em menos de 5 minutos.",
+                "Taxa Zero de comissão por venda efetuada.",
+                "7 dias gratuitos com todas as ferramentas Pro."
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <CheckCircle2 className="text-emerald-500 w-6 h-6" />
-                  <span className="text-slate-300 max-w-xs">{item}</span>
+                <li key={i} className="flex items-start gap-4">
+                  <div className="mt-1 bg-indigo-500/20 rounded-full p-1 border border-indigo-500/30">
+                    <CheckCircle2 className="text-indigo-400 w-5 h-5" />
+                  </div>
+                  <span className="text-slate-300 text-lg">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="glass p-8 shadow-2xl">
+          <div className="glass-card p-8 sm:p-10 shadow-2xl relative">
             {status === "success" ? (
-              <div className="text-center py-12 flex flex-col items-center">
-                <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-6">
-                  <CheckCircle2 className="w-8 h-8" />
+              <div className="text-center py-16 flex flex-col items-center">
+                <div className="w-20 h-20 bg-indigo-500/10 text-indigo-400 rounded-full flex items-center justify-center mb-6 border border-indigo-500/20">
+                  <CheckCircle2 className="w-10 h-10" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2 text-white">Tudo certo!</h3>
-                <p className="text-slate-400">
-                  Recebemos seus dados. Em breve entraremos em contato para finalizar sua configuração!
+                <h3 className="text-3xl font-black mb-3 text-white tracking-tight">Vaga Garantida!</h3>
+                <p className="text-slate-400 text-lg mb-8 leading-relaxed">
+                  Recebemos seus dados. Em breve um de nossos consultores entrará em contato para liberar seu acesso.
                 </p>
                 <button 
                   onClick={() => setStatus("idle")}
-                  className="mt-8 text-emerald-400 font-medium hover:underline"
+                  className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors inline-flex items-center gap-2"
                 >
                   Fazer novo cadastro
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <>
-                <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-white">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Pré-cadastro para Acesso Antecipado
-                </h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Criar Conta</h3>
+                  <p className="text-slate-400 text-sm">Preencha os dados abaixo e entraremos em contato.</p>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
                     <input
                       required
@@ -94,12 +102,12 @@ export function PreRegisterForm() {
                       name="restaurantName"
                       value={formData.restaurantName}
                       onChange={handleChange}
-                      className="w-full bg-slate-900/50 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500"
+                      className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
                       placeholder="Nome do Restaurante/Delivery"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <input
                         required
@@ -108,8 +116,8 @@ export function PreRegisterForm() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500"
-                        placeholder="Seu Nome"
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
+                        placeholder="Seu Nome Completo"
                       />
                     </div>
                     <div>
@@ -120,8 +128,8 @@ export function PreRegisterForm() {
                         name="whatsapp"
                         value={formData.whatsapp}
                         onChange={handleChange}
-                        className="w-full bg-slate-900/50 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500"
-                        placeholder="WhatsApp (com DDD)"
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
+                        placeholder="WhatsApp (DDD)"
                       />
                     </div>
                   </div>
@@ -134,7 +142,7 @@ export function PreRegisterForm() {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full bg-slate-900/50 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500"
+                      className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
                       placeholder="E-mail Profissional"
                     />
                   </div>
@@ -142,20 +150,21 @@ export function PreRegisterForm() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="w-full mt-4 flex h-10 items-center justify-center btn-primary rounded-md px-4 text-sm font-bold shadow-lg shadow-emerald-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full mt-4 flex h-14 items-center justify-center btn-primary rounded-xl px-6 text-base font-bold shadow-lg shadow-indigo-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {status === "submitting" ? (
                       <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Enviando...
+                        Processando...
                       </>
                     ) : (
-                      "Reservar Vaga"
+                      "Solicitar Acesso Antecipado"
                     )}
                   </button>
                   
-                  <p className="text-xs text-center text-slate-400 mt-4">
-                    Ao continuar, você concorda com nossos Termos de Serviço e Política de Privacidade.
+                  <p className="text-xs text-center text-slate-500 mt-6 mt-4">
+                    Ao continuar, você concorda com nossos <br className="sm:hidden"/> 
+                    <a href="#" className="underline hover:text-white transition-colors">Termos de Serviço</a> e <a href="#" className="underline hover:text-white transition-colors">Política de Privacidade</a>.
                   </p>
                 </form>
               </>

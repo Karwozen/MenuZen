@@ -1,54 +1,54 @@
-import { QrCode, MessageSquareCode, Store, ClipboardList } from "lucide-react";
+import { MessageCircle, QrCode, Store, Smartphone } from "lucide-react";
 
 export function Features() {
   const features = [
     {
-      title: "Cardápio Digital",
-      description: "Esqueça PDFs e impressões. Tenha um cardápio atrativo acessível via QR Code na mesa ou link na bio do Instagram.",
+      title: "Cardápio Digital Ultra Rápido",
+      description: "QR Code dinâmico com fotos em alta resolução. Carregamento instantâneo para não deixar seu cliente esperando.",
       icon: QrCode,
     },
     {
-      title: "Robô WhatsApp com IA",
-      description: "Nosso robô entende áudios e textos, tira dúvidas sobre o cardápio e finaliza o pedido de forma humanizada 24/7.",
-      icon: MessageSquareCode,
+      title: "Robô WhatsApp Inteligente",
+      description: "Nossa IA transcreve áudios, responde dúvidas do cardápio e fecha pedidos 24/7. Mais vendas, zero comissão.",
+      icon: MessageCircle,
     },
     {
-      title: "PDV Integrado",
-      description: "Frente de caixa ágil e fácil de usar. Controle todos os pedidos (Delivery e Salão) em uma única tela unificada.",
+      title: "PDV Simplificado",
+      description: "Interface desenhada para a correria do dia a dia. Controle de caixa, delivery e salão tudo em um único dashboard.",
       icon: Store,
     },
     {
-      title: "Gestão de Comandas",
-      description: "Controle de mesas perfeito. Os clientes podem pedir diretamente pelo celular e a cozinha recebe tudo instantaneamente.",
-      icon: ClipboardList,
+      title: "Comanda Eletrônica ágil",
+      description: "Garçons com smartphones lançam pedidos em um toque, enviando direto para as impressoras da cozinha e bar.",
+      icon: Smartphone,
     },
   ];
 
   return (
-    <section id="funcionalidades" className="py-24 relative">
+    <section id="funcionalidades" className="py-32 relative overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Tudo o que seu restaurante precisa
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl mb-6">
+            O fluxo perfeito para o seu restaurante
           </h2>
-          <p className="mt-4 text-lg text-slate-400">
-            Uma plataforma completa para gerenciar vendas, automatizar o atendimento e fidelizar seus clientes.
+          <p className="text-lg text-slate-400 font-light">
+            Automatizamos a burocracia para que você foque no que importa: <br className="hidden sm:block" />a experiência dos seus clientes.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="group relative glass p-6 hover:-translate-y-1 transition-transform duration-300"
+              className="group relative glass-card p-8 sm:p-10"
             >
-              <div className="feature-icon group-hover:bg-emerald-500/20 transition-colors">
-                <feature.icon className="h-5 w-5" />
+              <div className="feature-icon group-hover:bg-indigo-500/20 group-hover:text-indigo-400 group-hover:border-indigo-500/30">
+                <feature.icon className="h-6 w-6" />
               </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">
+              <h3 className="mb-4 text-2xl font-bold text-white tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-slate-400 leading-relaxed text-sm">
+              <p className="text-slate-400 leading-relaxed">
                 {feature.description}
               </p>
             </div>
