@@ -32,10 +32,6 @@ export default function RegisterPage() {
     const slug = generateSlug(restaurantName);
 
     try {
-      if (!isSupabaseConfigured) {
-        throw new Error("Failed to fetch"); // Bypass
-      }
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -51,14 +47,15 @@ export default function RegisterPage() {
         throw error;
       }
 
-      // Automatically sign in or redirect
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Erro ao criar conta. Em ambiente sem chaves, isso é esperado.");
-      // Se não houver configuração do supabase ainda, forçamos um redirect para visualizar
-      if (err.message?.includes("fetch")) {
+      if (data?.session) {
         router.push("/dashboard");
+      } else if (data?.user) {
+        setError("Conta criada! Verifique seu e-mail para confirmar o cadastro.");
+      } else {
+        setError("Conta criada, mas não foi possível fazer login automático.");
       }
+    } catch (err: any) {
+      setError(err.message || "Erro ao criar conta. Verifique suas informações.");
     } finally {
       setLoading(false);
     }

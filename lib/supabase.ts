@@ -1,13 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 
-const defaultUrl = 'https://placeholder-url.supabase.co';
-let url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-if (!url || !url.startsWith('http')) {
-  url = defaultUrl;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
+if (!isSupabaseConfigured) {
+  console.error('Supabase keys are missing. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your environment variables.');
 }
 
-const supabaseUrl = url;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+let client: ReturnType<typeof createClient>;
+try {
+  // Tentar ser criado com as chaves reais ou falhar explicitamente
+  client = createClient(supabaseUrl, supabaseAnonKey);
+} catch (error) {
+  client = new Proxy({} as any, {
+    get: () => { throw error; }
+  });
+}
 
-export const isSupabaseConfigured = url !== defaultUrl && supabaseAnonKey !== 'placeholder-key';
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = client;

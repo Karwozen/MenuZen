@@ -19,11 +19,6 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      if (!isSupabaseConfigured) {
-        // Fast bypass if there's no actual config, pretend it failed to fetch
-        throw new Error("Failed to fetch");
-      }
-
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -36,9 +31,6 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Erro ao fazer login. Verifique suas credenciais.");
-      if (err.message === "Failed to fetch" || err.message?.includes("fetch")) {
-        router.push("/dashboard");
-      }
     } finally {
       setLoading(false);
     }
