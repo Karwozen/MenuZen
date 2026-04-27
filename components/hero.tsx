@@ -100,9 +100,12 @@ export function Hero() {
               <div className="flex-1 rounded-xl bg-white/5 border border-white/5 mt-2 flex flex-col p-5">
                 <div className="h-4 w-32 bg-white/10 rounded mb-6"></div>
                 <div className="flex-1 border-b border-white/5 flex gap-4 items-end pb-4 h-full">
-                  {[...Array(12)].map((_, idx) => (
-                    <div key={idx} className="flex-1 bg-gradient-to-t from-indigo-500/40 to-indigo-500/10 rounded-t-sm" style={{ height: `${Math.max(20, Math.random() * 100)}%` }}></div>
-                  ))}
+                  {[...Array(12)].map((_, idx) => {
+                    const fakeHeight = Math.max(20, (idx * 37) % 100);
+                    return (
+                      <div key={idx} className="flex-1 bg-gradient-to-t from-indigo-500/40 to-indigo-500/10 rounded-t-sm" style={{ height: `${fakeHeight}%` }}></div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
