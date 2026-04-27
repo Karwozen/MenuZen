@@ -21,7 +21,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const navigation = [
     { name: "Início", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Cardápio", href: "/dashboard/menu", icon: MenuSquare },
+    { name: "Cardápio", href: "/dashboard/cardapio", icon: MenuSquare },
     { name: "Pedidos", href: "/dashboard/orders", icon: ShoppingBag },
     { name: "Configuração do Robô IA", href: "/dashboard/ai-bot", icon: Bot },
     { name: "Assinatura", href: "/dashboard/subscription", icon: CreditCard },
