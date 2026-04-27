@@ -184,6 +184,7 @@ export default function CardapioPage() {
           descricao: novoProdDesc, 
           preco: priceVal, 
           categoria_id: novoProdCat,
+          restaurante_id: restauranteId,
           imagem_url: imagem_url
         }])
         .select();
