@@ -14,12 +14,13 @@ export default function LandingPage() {
       <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '4000ms' }}></div>
       <div className="fixed top-[40%] right-[-10%] w-[600px] h-[600px] bg-orange-600/10 rounded-full blur-[150px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '5000ms' }}></div>
       <div className="fixed bottom-[-10%] left-[20%] w-[400px] h-[400px] bg-amber-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '6000ms' }}></div>
-      <div className="fixed inset-0 opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay pointer-events-none z-0"></div>
-
-      {/* Premium FoodTech Background (Tijolos Escuros sem comida) */}
-      <div className="fixed inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1510172951991-856a654063f9?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-20 blur-[2px] grayscale-[60%] pointer-events-none"></div>
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#0a0400]/40 via-[#0a0400]/70 to-[#0a0400] pointer-events-none"></div>
-      <div className="fixed inset-0 z-0 smoke-bg opacity-30 pointer-events-none filter sepia-[50%] hue-rotate-[-30deg] saturate-200"></div>
+      
+      {/* Forno de Tijolos com Lenha (Animado, Esmaecido e Fixo) */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none animate-oven-fire"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1590947132387-155cc02f3212?q=80&w=2400&auto=format&fit=crop')" }}
+      ></div>
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#0a0400]/60 via-[#0a0400]/80 to-[#0a0400] pointer-events-none"></div>
 
       {/* Floating Embers (10 Fagulhas) */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
