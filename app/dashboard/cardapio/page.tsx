@@ -36,84 +36,90 @@ export default function CardapioPage() {
   const [restauranteId, setRestauranteId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
-
   const showFeedback = (type: 'success' | 'error', msg: string) => {
     setFeedback({ type, msg });
     setTimeout(() => setFeedback(null), 5000);
   };
 
-  const fetchInitialData = async () => {
-    if (!isSupabaseConfigured) {
-      setLoadingInitial(false);
-      return;
-    }
+  useEffect(() => {
+    let mounted = true;
 
-    try {
-      setLoadingInitial(true);
-
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      let user = session?.user || null;
-      
-      if (!user) {
-        const authData = await supabase.auth.getUser();
-        user = authData.data.user;
-      }
-
-      if (!user) {
-        console.error("Nenhum usuário logado encontrado na sessão atual.");
+    async function fetchInitialData() {
+      if (!isSupabaseConfigured) {
+        if (mounted) setLoadingInitial(false);
         return;
       }
-      
-      console.log("Iniciando busca para o usuário:", user.id);
 
-      // Buscar ID do restaurante
-      const { data: restData, error: restError } = await supabase
-        .from("restaurantes")
-        .select("*")
-        .eq("owner_id", user.id)
-        .single();
+      try {
+        if (mounted) setLoadingInitial(true);
 
-      if (restError) {
-        console.error("Erro detalhado:", restError.message, restError.details);
-        showFeedback('error', 'Erro ao carregar seu restaurante. Contate o suporte.');
-        return;
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        let user = session?.user || null;
+        
+        if (!user) {
+          const authData = await supabase.auth.getUser();
+          user = authData.data.user;
+        }
+
+        if (!user) {
+          console.error("Nenhum usuário logado encontrado na sessão atual.");
+          return;
+        }
+        
+        console.log("Iniciando busca para o usuário:", user.id);
+
+        // Buscar ID do restaurante
+        const { data: restData, error: restError } = await supabase
+          .from("restaurantes")
+          .select("*")
+          .eq("owner_id", user.id)
+          .single();
+
+        if (restError) {
+          console.error("Erro detalhado:", restError.message, restError.details);
+          if (mounted) showFeedback('error', 'Erro ao carregar seu restaurante. Contate o suporte.');
+          return;
+        }
+        
+        const rId = restData?.id;
+        if (!rId) return;
+
+        console.log("Restaurante ID encontrado:", rId);
+        if (mounted) setRestauranteId(rId);
+
+        const [catRes, prodRes] = await Promise.all([
+          supabase.from("categorias").select("*").eq("restaurante_id", rId).order('created_at', { ascending: true }),
+          supabase.from("produtos").select("*").eq("restaurante_id", rId).order('created_at', { ascending: true })
+        ]);
+
+        let catList = catRes.data || [];
+        if (catList.length === 0) {
+          console.log("Busca concluída: nenhum item encontrado para o restaurante:", rId);
+        }
+        
+        let pData = prodRes.data || [];
+        
+        if (mounted) {
+          setCategorias(catList);
+          setProdutos(pData);
+          if (catList.length > 0) {
+            setNovoProdCat(catList[0].id);
+          }
+        }
+
+      } catch (error: any) {
+        console.error("Erro ao buscar dados:", error);
+        if (mounted) showFeedback('error', 'Falha ao carregar os dados. Verifique a estrutura do banco.');
+      } finally {
+        if (mounted) setLoadingInitial(false);
       }
-      
-      const rId = restData?.id;
-      if (!rId) return;
-
-      console.log("Restaurante ID encontrado:", rId);
-      setRestauranteId(rId);
-
-      const [catRes, prodRes] = await Promise.all([
-        supabase.from("categorias").select("*").eq("restaurante_id", rId).order('created_at', { ascending: true }),
-        supabase.from("produtos").select("*").eq("restaurante_id", rId).order('created_at', { ascending: true })
-      ]);
-
-      let catList = catRes.data || [];
-      if (catList.length === 0) {
-        console.log("Busca concluída: nenhum item encontrado para o restaurante:", rId);
-      }
-      setCategorias(catList);
-
-      let pData = prodRes.data || [];
-      setProdutos(pData);
-
-      if (catList.length > 0) {
-        setNovoProdCat(catList[0].id);
-      }
-
-    } catch (error: any) {
-      console.error("Erro ao buscar dados:", error);
-      showFeedback('error', 'Falha ao carregar os dados. Verifique a estrutura do banco.');
-    } finally {
-      setLoadingInitial(false);
     }
-  };
+
+    fetchInitialData();
+
+    return () => { mounted = false; };
+  }, []);
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();

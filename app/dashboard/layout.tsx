@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -9,21 +10,44 @@ import {
   Bot, 
   CreditCard,
   LogOut,
-  Zap
+  Zap,
+  Settings,
+  ExternalLink
 } from "lucide-react";
 import { clsx } from "clsx";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [slug, setSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchSlug() {
+      if (!isSupabaseConfigured) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('restaurantes')
+        .select('slug')
+        .eq('owner_id', user.id)
+        .single();
+      
+      if (data?.slug) {
+        setSlug(data.slug);
+      }
+    }
+    fetchSlug();
+  }, []);
 
   const navigation = [
     { name: "Início", href: "/dashboard", icon: LayoutDashboard },
     { name: "Cardápio", href: "/dashboard/cardapio", icon: MenuSquare },
     { name: "Pedidos", href: "/dashboard/orders", icon: ShoppingBag },
     { name: "Configuração do Robô IA", href: "/dashboard/ai-bot", icon: Bot },
+    { name: "Configurações", href: "/dashboard/configuracoes", icon: Settings },
     { name: "Assinatura", href: "/dashboard/subscription", icon: CreditCard },
   ];
 
@@ -50,6 +74,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+          {slug && (
+            <div className="mb-6 px-1">
+              <a 
+                href={`/${slug}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl text-sm transition-colors shadow-lg shadow-emerald-500/20"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Ver Cardápio
+              </a>
+            </div>
+          )}
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4 px-3">Geral</div>
           {navigation.map((item) => {
             const isActive = pathname === item.href;
@@ -92,9 +129,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             <span className="font-extrabold tracking-tight text-white">MenuFlow</span>
           </Link>
-          <button className="text-slate-400">
-            <MenuSquare className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-4">
+            {slug && (
+               <a 
+                 href={`/${slug}`} 
+                 target="_blank" 
+                 rel="noreferrer"
+                 className="flex items-center justify-center p-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors"
+                 title="Ver Cardápio"
+               >
+                 <ExternalLink className="w-5 h-5" />
+               </a>
+            )}
+            <button className="text-slate-400">
+              <MenuSquare className="w-6 h-6" />
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 overflow-y-auto bg-[url('/mesh.svg')] bg-cover bg-fixed">

@@ -3,24 +3,19 @@ import { MessageCircle, QrCode, Store, Smartphone } from "lucide-react";
 export function Features() {
   const features = [
     {
-      title: "Cardápio Digital Ultra Rápido",
+      title: "Cardápio via QR Code",
       description: "QR Code dinâmico com fotos em alta resolução. Carregamento instantâneo para não deixar seu cliente esperando.",
       icon: QrCode,
     },
     {
-      title: "Robô WhatsApp Inteligente",
+      title: "Pedidos direto no seu WhatsApp",
       description: "Nossa IA transcreve áudios, responde dúvidas do cardápio e fecha pedidos 24/7. Mais vendas, zero comissão.",
       icon: MessageCircle,
     },
     {
-      title: "PDV Simplificado",
+      title: "Gestão Simples e Rápida",
       description: "Interface desenhada para a correria do dia a dia. Controle de caixa, delivery e salão tudo em um único dashboard.",
       icon: Store,
-    },
-    {
-      title: "Comanda Eletrônica ágil",
-      description: "Garçons com smartphones lançam pedidos em um toque, enviando direto para as impressoras da cozinha e bar.",
-      icon: Smartphone,
     },
   ];
 
@@ -36,7 +31,7 @@ export function Features() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
           {features.map((feature, index) => (
             <div 
               key={index} 

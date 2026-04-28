@@ -20,10 +20,10 @@ export function Hero() {
         
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link 
-            href="#pre-cadastro"
+            href="/register"
             className="w-full sm:w-auto inline-flex h-12 items-center justify-center btn-primary rounded-xl px-8 text-base font-bold transition-all"
           >
-            Começar Teste Grátis
+            Criar Meu Cardápio Grátis
             <ArrowRight className="ml-2 h-5 w-5" />
           </Link>
           <Link 

@@ -9,10 +9,10 @@ export function Pricing() {
 
   const plans = [
     {
-      name: "Básico",
+      name: "Iniciante",
       description: "Perfeito para negócios locais começando a digitalizar.",
-      monthlyPrice: 97,
-      annualPrice: 87,
+      monthlyPrice: 0,
+      annualPrice: 0,
       popular: false,
       features: [
         "Cardápio Digital Ilimitado",
@@ -25,11 +25,11 @@ export function Pricing() {
     {
       name: "Pro",
       description: "O mais escolhido. Automação completa para turbinar vendas.",
-      monthlyPrice: 197,
-      annualPrice: 167,
+      monthlyPrice: 49,
+      annualPrice: 39,
       popular: true,
       features: [
-        "Tudo do plano Básico",
+        "Tudo do plano Iniciante",
         "Robô MenuFlow IA no WhatsApp",
         "CRM e Fidelização",
         "PDV Frente de Caixa Rápido",
@@ -38,10 +38,10 @@ export function Pricing() {
       ]
     },
     {
-      name: "Enterprise",
+      name: "VIP",
       description: "Para redes e restaurantes de alto volume.",
-      monthlyPrice: "Custom",
-      annualPrice: "Custom",
+      monthlyPrice: 99,
+      annualPrice: 79,
       popular: false,
       features: [
         "Tudo do plano Pro",
@@ -108,17 +108,11 @@ export function Pricing() {
               </div>
 
               <div className="mb-8 flex items-baseline text-white">
-                {plan.monthlyPrice === "Custom" ? (
-                  <span className="text-4xl font-extrabold tracking-tight">Personalizado</span>
-                ) : (
-                  <>
-                    <span className="text-2xl font-bold mr-1 text-slate-500">R$</span>
-                    <span className="text-5xl font-black tracking-tighter">
-                      {annual ? plan.annualPrice : plan.monthlyPrice}
-                    </span>
-                    <span className="ml-2 text-sm font-medium text-slate-500">/mês</span>
-                  </>
-                )}
+                <span className="text-2xl font-bold mr-1 text-slate-500">R$</span>
+                <span className="text-5xl font-black tracking-tighter">
+                  {annual ? plan.annualPrice : plan.monthlyPrice}
+                </span>
+                <span className="ml-2 text-sm font-medium text-slate-500">/mês</span>
               </div>
 
               <ul className="flex-1 space-y-4 mb-10 text-sm">
@@ -131,13 +125,13 @@ export function Pricing() {
               </ul>
 
               <a 
-                href="#pre-cadastro"
+                href="/register"
                 className={clsx(
                   "mt-auto block w-full text-center text-sm font-bold py-3.5 px-6 rounded-xl transition-all",
                   plan.popular ? "btn-primary shadow-xl shadow-indigo-500/20" : "btn-glass text-white"
                 )}
               >
-                {plan.monthlyPrice === "Custom" ? "Falar com Vendas" : "Começar 7 Dias Grátis"}
+                Começar 7 Dias Grátis
               </a>
             </div>
           ))}
