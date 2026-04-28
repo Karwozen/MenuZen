@@ -7,7 +7,7 @@ export function SocialProof() {
         </p>
         <div className="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-700 select-none pointer-events-none">
           <h3 className="text-2xl font-bold font-serif italic text-white">Osteria Bella</h3>
-          <h3 className="text-2xl font-black text-white uppercase tracking-tighter">BURGER<span className="text-indigo-400">X</span></h3>
+          <h3 className="text-2xl font-black text-white uppercase tracking-tighter">BURGER<span className="text-orange-400">X</span></h3>
           <h3 className="text-2xl font-semibold text-white">Sushi<span className="font-light">Zen</span></h3>
           <h3 className="text-2xl text-white font-black tracking-widest">T A C O S</h3>
           <h3 className="text-xl font-medium text-white border-2 border-white px-3 py-1">PIZZA CO.</h3>

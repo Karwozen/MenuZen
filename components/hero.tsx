@@ -3,42 +3,44 @@ import { ArrowRight, Play, BarChart3, Users, MessageCircle, Settings, LayoutDash
 
 export function Hero() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
-      <div className="container mx-auto px-4 text-center">
-        <div className="inline-flex items-center px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-8 rounded-full uppercase tracking-widest backdrop-blur-sm">
-          <span className="flex h-2 w-2 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
-          A Revolução do Delivery Independente
+    <section className="relative overflow-hidden">
+      <div className="relative z-10 flex flex-col items-center pt-20 pb-16 gap-16">
+        <div className="container mx-auto px-4 text-center">
+          <div className="inline-flex items-center px-4 py-1.5 bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold mb-8 rounded-full uppercase tracking-widest backdrop-blur-sm">
+            <span className="flex h-2 w-2 rounded-full bg-orange-500 mr-2 animate-pulse"></span>
+            A Revolução do Delivery Independente
+          </div>
+          
+          <h1 className="mx-auto max-w-5xl text-5xl font-black tracking-tight sm:text-6xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-400 to-amber-400 drop-shadow-lg pb-4">
+            Liberte seu restaurante das <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500 pb-2">taxas abusivas</span>.<br className="hidden md:block" /> Tenha seu aplicativo próprio.
+          </h1>
+          
+          <p className="mx-auto mt-6 max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed font-light">
+            Pare de deixar 27% do seu lucro nos aplicativos de delivery. Crie seu cardápio digital, receba pedidos direto no seu WhatsApp e construa a sua própria base de clientes fiéis.
+          </p>
+          
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link 
+              href="/register"
+              className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-xl px-8 text-base font-bold transition-all duration-300 hover:scale-105 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:shadow-[0_0_50px_rgba(249,115,22,0.7)] border border-orange-400/50"
+            >
+              Criar Meu Cardápio Grátis
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <Link 
+              href="#demo"
+              className="w-full sm:w-auto inline-flex h-12 items-center justify-center btn-glass rounded-xl px-8 text-base font-bold gap-2"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              Ver Demonstração
+            </Link>
+          </div>
         </div>
-        
-        <h1 className="mx-auto max-w-5xl text-5xl font-black tracking-tight sm:text-6xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-200 to-slate-500 pb-4">
-          Liberte seu restaurante das <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500 pb-2">taxas abusivas</span>.<br className="hidden md:block" /> Tenha seu aplicativo próprio.
-        </h1>
-        
-        <p className="mx-auto mt-6 max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed font-light">
-          Pare de deixar 27% do seu lucro nos aplicativos de delivery. Crie seu cardápio digital, receba pedidos direto no seu WhatsApp e construa a sua própria base de clientes fiéis.
-        </p>
-        
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link 
-            href="/register"
-            className="w-full sm:w-auto inline-flex h-12 items-center justify-center btn-primary rounded-xl px-8 text-base font-bold transition-all"
-          >
-            Criar Meu Cardápio Grátis
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-          <Link 
-            href="#demo"
-            className="w-full sm:w-auto inline-flex h-12 items-center justify-center btn-glass rounded-xl px-8 text-base font-bold gap-2"
-          >
-            <Play className="w-4 h-4 fill-current" />
-            Ver Demonstração
-          </Link>
-        </div>
-      </div>
 
-      {/* Dashboard Preview Component simulating UI */}
-      <div className="container mx-auto px-4 mt-20 md:mt-24 pointer-events-none select-none">
-        <div className="relative mx-auto max-w-5xl rounded-t-2xl border border-white/10 border-b-0 bg-[#0a0a0a]/80 shadow-2xl backdrop-blur-2xl overflow-hidden shadow-indigo-500/10">
+        {/* Dashboard Preview Component simulating UI */}
+        <div className="container mx-auto px-4 pointer-events-none select-none relative pb-10 w-full">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-orange-600/20 blur-[120px] z-0 rounded-full" />
+          <div className="relative mx-auto max-w-5xl rounded-t-2xl border border-white/10 border-b-0 bg-[#0a0400]/80 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl overflow-hidden z-10">
           
           <div className="flex h-12 items-center gap-2 border-b border-white/5 bg-white/[0.02] px-4">
             <div className="flex gap-1.5">
@@ -58,19 +60,19 @@ export function Hero() {
             {/* Mock Sidebar */}
             <div className="hidden md:flex flex-col w-64 border-r border-white/5 p-4 gap-4">
               <div className="flex items-center gap-3 px-2 mb-4">
-                <div className="h-8 w-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
-                  <LayoutDashboard className="w-4 h-4 text-indigo-400" />
+                <div className="h-8 w-8 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
+                  <LayoutDashboard className="w-4 h-4 text-orange-400" />
                 </div>
                 <div className="h-4 w-24 bg-white/10 rounded"></div>
               </div>
               {[...Array(5)].map((_, i) => (
-                <div key={i} className={`h-10 rounded-lg flex items-center px-4 gap-3 ${i === 0 ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-500 border border-transparent'}`}>
+                <div key={i} className={`h-10 rounded-lg flex items-center px-4 gap-3 ${i === 0 ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'text-slate-500 border border-transparent'}`}>
                   {i === 0 && <BarChart3 className="w-4 h-4" />}
                   {i === 1 && <MessageCircle className="w-4 h-4" />}
                   {i === 2 && <Users className="w-4 h-4" />}
                   {i === 3 && <Settings className="w-4 h-4" />}
                   {i === 4 && <LayoutDashboard className="w-4 h-4" />}
-                  <div className={`h-2.5 rounded-sm ${i === 0 ? 'w-16 bg-indigo-400/50' : 'w-20 bg-white/10'}`}></div>
+                  <div className={`h-2.5 rounded-sm ${i === 0 ? 'w-16 bg-orange-400/50' : 'w-20 bg-white/10'}`}></div>
                 </div>
               ))}
             </div>
@@ -81,9 +83,9 @@ export function Hero() {
                   <div className="h-6 w-32 bg-white/10 rounded-md"></div>
                   <div className="h-4 w-48 bg-white/5 rounded-md"></div>
                 </div>
-                <div className="h-10 w-32 bg-indigo-500/20 border border-indigo-500/30 rounded-lg flex items-center justify-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-indigo-400"></div>
-                  <div className="h-3 w-16 bg-indigo-400/50 rounded flex-shrink-0"></div>
+                <div className="h-10 w-32 bg-orange-500/20 border border-orange-500/30 rounded-lg flex items-center justify-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-orange-400"></div>
+                  <div className="h-3 w-16 bg-orange-400/50 rounded flex-shrink-0"></div>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -103,7 +105,7 @@ export function Hero() {
                   {[...Array(12)].map((_, idx) => {
                     const fakeHeight = Math.max(20, (idx * 37) % 100);
                     return (
-                      <div key={idx} className="flex-1 bg-gradient-to-t from-indigo-500/40 to-indigo-500/10 rounded-t-sm" style={{ height: `${fakeHeight}%` }}></div>
+                      <div key={idx} className="flex-1 bg-gradient-to-t from-orange-500/40 to-orange-500/10 rounded-t-sm" style={{ height: `${fakeHeight}%` }}></div>
                     );
                   })}
                 </div>
@@ -113,6 +115,7 @@ export function Hero() {
 
           {/* Fade out bottom to blend with background */}
           <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none"></div>
+        </div>
         </div>
       </div>
     </section>

@@ -37,9 +37,9 @@ export function PreRegisterForm() {
 
   return (
     <section id="pre-cadastro" className="py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-indigo-900/10 backdrop-blur-3xl -z-10"></div>
+      <div className="absolute inset-0 bg-orange-900/10 backdrop-blur-3xl -z-10"></div>
       {/* Decorative patterns */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 blur-[120px] -z-10"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-tr from-orange-500/20 to-red-500/20 blur-[120px] -z-10"></div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
@@ -59,8 +59,8 @@ export function PreRegisterForm() {
                 "7 dias gratuitos com todas as ferramentas Pro."
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-4">
-                  <div className="mt-1 bg-indigo-500/20 rounded-full p-1 border border-indigo-500/30">
-                    <CheckCircle2 className="text-indigo-400 w-5 h-5" />
+                  <div className="mt-1 bg-orange-500/20 rounded-full p-1 border border-orange-500/30">
+                    <CheckCircle2 className="text-orange-400 w-5 h-5" />
                   </div>
                   <span className="text-slate-300 text-lg">{item}</span>
                 </li>
@@ -71,7 +71,7 @@ export function PreRegisterForm() {
           <div className="glass-card p-8 sm:p-10 shadow-2xl relative">
             {status === "success" ? (
               <div className="text-center py-16 flex flex-col items-center">
-                <div className="w-20 h-20 bg-indigo-500/10 text-indigo-400 rounded-full flex items-center justify-center mb-6 border border-indigo-500/20">
+                <div className="w-20 h-20 bg-orange-500/10 text-orange-400 rounded-full flex items-center justify-center mb-6 border border-orange-500/20">
                   <CheckCircle2 className="w-10 h-10" />
                 </div>
                 <h3 className="text-3xl font-black mb-3 text-white tracking-tight">Vaga Garantida!</h3>
@@ -80,7 +80,7 @@ export function PreRegisterForm() {
                 </p>
                 <button 
                   onClick={() => setStatus("idle")}
-                  className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors inline-flex items-center gap-2"
+                  className="text-orange-400 font-bold hover:text-orange-300 transition-colors inline-flex items-center gap-2"
                 >
                   Fazer novo cadastro
                   <ArrowRight className="w-4 h-4" />
@@ -102,7 +102,7 @@ export function PreRegisterForm() {
                       name="restaurantName"
                       value={formData.restaurantName}
                       onChange={handleChange}
-                      className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
+                      className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 placeholder:text-slate-500 transition-all"
                       placeholder="Nome do Restaurante/Delivery"
                     />
                   </div>
@@ -116,7 +116,7 @@ export function PreRegisterForm() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 placeholder:text-slate-500 transition-all"
                         placeholder="Seu Nome Completo"
                       />
                     </div>
@@ -128,7 +128,7 @@ export function PreRegisterForm() {
                         name="whatsapp"
                         value={formData.whatsapp}
                         onChange={handleChange}
-                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 placeholder:text-slate-500 transition-all"
                         placeholder="WhatsApp (DDD)"
                       />
                     </div>
@@ -142,7 +142,7 @@ export function PreRegisterForm() {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 placeholder:text-slate-500 transition-all"
+                      className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 placeholder:text-slate-500 transition-all"
                       placeholder="E-mail Profissional"
                     />
                   </div>
@@ -150,7 +150,7 @@ export function PreRegisterForm() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="w-full mt-4 flex h-14 items-center justify-center btn-primary rounded-xl px-6 text-base font-bold shadow-lg shadow-indigo-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full mt-4 flex h-14 items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 rounded-xl px-6 text-base font-bold text-white shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:shadow-[0_0_50px_rgba(249,115,22,0.7)] hover:scale-[1.02] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed border border-orange-400/50"
                   >
                     {status === "submitting" ? (
                       <>

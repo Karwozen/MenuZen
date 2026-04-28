@@ -70,13 +70,13 @@ export function Pricing() {
             >
               <span 
                 className={clsx(
-                  "inline-block h-5 w-5 transform rounded-full bg-indigo-500 transition-transform shadow-md",
-                  annual ? "translate-x-6 bg-indigo-400" : "translate-x-1"
+                  "inline-block h-5 w-5 transform rounded-full bg-orange-500 transition-transform shadow-md",
+                  annual ? "translate-x-6 bg-orange-400" : "translate-x-1"
                 )}
               />
             </button>
             <span className={clsx("text-sm font-medium transition-colors flex items-center gap-2", annual ? "text-white" : "text-slate-500")}>
-              Anual <span className="text-indigo-300 font-bold text-[10px] bg-indigo-500/20 border border-indigo-500/30 py-0.5 px-2 rounded-full tracking-wide">2 MESES OFF</span>
+              Anual <span className="text-orange-300 font-bold text-[10px] bg-orange-500/20 border border-orange-500/30 py-0.5 px-2 rounded-full tracking-wide">2 MESES OFF</span>
             </span>
           </div>
         </div>
@@ -86,12 +86,15 @@ export function Pricing() {
             <div 
               key={index}
               className={clsx(
-                "relative flex flex-col p-8 lg:p-10 glass-card",
-                plan.popular && "border-indigo-500/40 shadow-2xl shadow-indigo-500/10 md:-translate-y-4 md:hover:-translate-y-4"
+                "group relative flex flex-col p-8 lg:p-10 bg-[#1a0b02]/60 backdrop-blur-xl rounded-2xl overflow-hidden transition-all duration-500",
+                plan.popular 
+                  ? "border border-orange-500/60 shadow-[0_0_40px_rgba(234,88,12,0.2)] md:-translate-y-4 md:hover:-translate-y-6 hover:shadow-[0_0_50px_rgba(234,88,12,0.3)]" 
+                  : "border border-orange-500/20 shadow-[0_8px_30px_rgba(234,88,12,0.05)] hover:-translate-y-2 hover:border-orange-500/60 hover:shadow-[0_0_40px_rgba(234,88,12,0.2)] hover:bg-[#2a1204]/80"
               )}
             >
+              <div className="absolute inset-0 bg-gradient-to-b from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               {plan.popular && (
-                <div className="absolute -top-4 left-0 right-0 mx-auto w-36 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-1.5 text-center text-xs font-bold tracking-wider text-white shadow-lg shadow-indigo-500/20">
+                <div className="absolute -top-4 left-0 right-0 mx-auto w-36 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 px-3 py-1.5 text-center text-xs font-bold tracking-wider text-[#050505] shadow-[0_0_20px_rgba(249,115,22,0.5)]">
                   MAIS ESCOLHIDO
                 </div>
               )}
@@ -116,7 +119,7 @@ export function Pricing() {
               <ul className="flex-1 space-y-4 mb-10 text-sm">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex gap-4 items-start">
-                    <Check className="h-5 w-5 shrink-0 text-indigo-400" />
+                    <Check className={clsx("h-5 w-5 shrink-0", plan.popular ? "text-orange-400" : "text-white/40")} />
                     <span className="text-slate-300">{feature}</span>
                   </li>
                 ))}
@@ -125,8 +128,10 @@ export function Pricing() {
               <Link 
                 href="/register"
                 className={clsx(
-                  "mt-auto block w-full text-center text-sm font-bold py-3.5 px-6 rounded-xl transition-all",
-                  plan.popular ? "btn-primary shadow-xl shadow-indigo-500/20" : "btn-glass text-white"
+                  "mt-auto block w-full text-center text-sm font-bold py-3.5 px-6 rounded-xl transition-all duration-300 border",
+                  plan.popular 
+                    ? "bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:shadow-[0_0_50px_rgba(249,115,22,0.7)] hover:scale-[1.03] border-orange-400/50" 
+                    : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
                 )}
               >
                 Começar 7 Dias Grátis

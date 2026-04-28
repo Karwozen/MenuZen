@@ -40,10 +40,11 @@ export function Features() {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="group relative glass-card p-8 sm:p-10 border border-white/5"
+              className="group relative bg-[#1a0b02]/60 backdrop-blur-xl border border-orange-500/20 shadow-[0_8px_30px_rgba(234,88,12,0.05)] p-8 sm:p-10 rounded-3xl hover:-translate-y-2 hover:border-orange-500/60 hover:shadow-[0_0_40px_rgba(234,88,12,0.2)] hover:bg-[#2a1204]/80 duration-500 transition-all overflow-hidden"
             >
-              <div className="feature-icon group-hover:bg-indigo-500/20 group-hover:text-indigo-400 group-hover:border-indigo-500/30">
-                <feature.icon className="h-6 w-6" />
+              <div className="absolute inset-0 bg-gradient-to-b from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <div className="mb-6 inline-flex bg-gradient-to-br from-amber-500/20 to-purple-500/20 border border-white/20 p-3 rounded-2xl shadow-lg backdrop-blur-md text-orange-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] group-hover:text-amber-300 transition-all duration-500 relative z-10">
+                <feature.icon className="h-8 w-8" />
               </div>
               <h3 className="mb-4 text-2xl font-bold text-white tracking-tight">
                 {feature.title}

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
 }
 
 body {
-  @apply bg-[#0a0a0a] text-slate-50;
+  @apply bg-[#0a0400] text-slate-50;
 }
 
 .mesh-bg {
@@ -17,9 +17,9 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.12) 0, transparent 40%),
-              radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.12) 0, transparent 50%),
-              radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.08) 0, transparent 60%);
+  background: radial-gradient(circle at 15% 50%, rgba(249, 115, 22, 0.12) 0, transparent 40%),
+              radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.12) 0, transparent 50%),
+              radial-gradient(circle at 50% 80%, rgba(245, 158, 11, 0.08) 0, transparent 60%);
 }
 
 .glass {
@@ -39,13 +39,13 @@ body {
 }
 
 .glass-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.1);
+  border-color: rgba(249, 115, 22, 0.3);
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.1);
   background: rgba(255, 255, 255, 0.04);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background: linear-gradient(135deg, #f97316, #ef4444);
   position: relative;
   transition: all .2s ease;
   color: white;
@@ -57,7 +57,7 @@ body {
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background: linear-gradient(135deg, #f97316, #ef4444);
   z-index: -1;
   opacity: 0.4;
   transition: opacity 0.3s ease;
@@ -91,7 +91,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a5b4fc;
+  color: #fdba74;
   margin-bottom: 1.25rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
