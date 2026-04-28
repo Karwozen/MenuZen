@@ -96,3 +96,30 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
 }
+
+@keyframes float-3d {
+  0%, 100% { transform: perspective(2000px) rotateX(12deg) rotateY(-15deg) rotateZ(2deg) translateY(0px); }
+  50% { transform: perspective(2000px) rotateX(14deg) rotateY(-13deg) rotateZ(1deg) translateY(-20px); }
+}
+@keyframes pan-smoke {
+  0% { background-position: 0% 100%; opacity: 0.1; }
+  50% { opacity: 0.3; }
+  100% { background-position: 100% 0%; opacity: 0.1; }
+}
+@keyframes rise-embers {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+}
+
+.animate-float-3d {
+  animation: float-3d 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+.smoke-bg {
+  background-image: url('https://images.unsplash.com/photo-1508747703725-719777637510?q=80&w=2000&auto=format&fit=crop');
+  background-size: 200% 200%;
+  animation: pan-smoke 30s linear infinite;
+  mix-blend-mode: screen;
+}

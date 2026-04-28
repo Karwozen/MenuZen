@@ -86,7 +86,7 @@ export function Pricing() {
             <div 
               key={index}
               className={clsx(
-                "group relative flex flex-col p-8 lg:p-10 bg-[#1a0b02]/60 backdrop-blur-xl rounded-2xl overflow-hidden transition-all duration-500",
+                "group relative flex flex-col p-8 lg:p-10 bg-[#1a0b02]/60 backdrop-blur-xl backdrop-saturate-150 rounded-2xl overflow-hidden transition-all duration-500",
                 plan.popular 
                   ? "border border-orange-500/60 shadow-[0_0_40px_rgba(234,88,12,0.2)] md:-translate-y-4 md:hover:-translate-y-6 hover:shadow-[0_0_50px_rgba(234,88,12,0.3)]" 
                   : "border border-orange-500/20 shadow-[0_8px_30px_rgba(234,88,12,0.05)] hover:-translate-y-2 hover:border-orange-500/60 hover:shadow-[0_0_40px_rgba(234,88,12,0.2)] hover:bg-[#2a1204]/80"

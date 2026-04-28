@@ -11,8 +11,8 @@ export function Hero() {
             A Revolução do Delivery Independente
           </div>
           
-          <h1 className="mx-auto max-w-5xl text-5xl font-black tracking-tight sm:text-6xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-400 to-amber-400 drop-shadow-lg pb-4">
-            Liberte seu restaurante das <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500 pb-2">taxas abusivas</span>.<br className="hidden md:block" /> Tenha seu aplicativo próprio.
+          <h1 className="mx-auto max-w-5xl text-5xl font-black tracking-tight sm:text-6xl md:text-7xl text-white drop-shadow-lg pb-4">
+            Liberte seu restaurante das <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 pb-2">taxas abusivas</span>.<br className="hidden md:block" /> Tenha seu aplicativo próprio.
           </h1>
           
           <p className="mx-auto mt-6 max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed font-light">
@@ -40,7 +40,8 @@ export function Hero() {
         {/* Dashboard Preview Component simulating UI */}
         <div className="container mx-auto px-4 pointer-events-none select-none relative pb-10 w-full">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-orange-600/20 blur-[120px] z-0 rounded-full" />
-          <div className="relative mx-auto max-w-5xl rounded-t-2xl border border-white/10 border-b-0 bg-[#0a0400]/80 shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl overflow-hidden z-10">
+          <div className="relative z-10 mx-auto max-w-5xl">
+            <div className="relative rounded-t-2xl bg-[#0a0400]/80 backdrop-blur-2xl overflow-hidden animate-float-3d shadow-[-30px_40px_100px_rgba(234,88,12,0.25)] border-l-[3px] border-b-[4px] border-white/20 border-r border-r-white/5 border-t border-t-white/10">
           
           <div className="flex h-12 items-center gap-2 border-b border-white/5 bg-white/[0.02] px-4">
             <div className="flex gap-1.5">
@@ -112,10 +113,11 @@ export function Hero() {
               </div>
             </div>
           </div>
+          </div>
+          </div>
 
           {/* Fade out bottom to blend with background */}
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none"></div>
-        </div>
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0400] to-transparent pointer-events-none"></div>
         </div>
       </div>
     </section>
