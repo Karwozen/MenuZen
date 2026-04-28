@@ -2,17 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { Loader2, Settings, Smartphone, Link as LinkIcon, Save, Image as ImageIcon, Palette, Upload } from "lucide-react";
+import { Loader2, Settings, Smartphone, Link as LinkIcon, Save, Image as ImageIcon, Palette, Upload, MapPin, Clock, CreditCard, DollarSign, Instagram, Type, Monitor } from "lucide-react";
 
 export default function ConfiguracoesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [bannerUrl, setBannerUrl] = useState("");
+  const [temaFundo, setTemaFundo] = useState("escuro");
+  const [estiloFonte, setEstiloFonte] = useState("sans");
+  const [instagram, setInstagram] = useState("");
+  const [uploadingBanner, setUploadingBanner] = useState(false);
   const [nome, setNome] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [slug, setSlug] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [corTema, setCorTema] = useState("#10b981");
+  const [endereco, setEndereco] = useState("");
+  const [horarioAtendimento, setHorarioAtendimento] = useState("");
+  const [formasPagamento, setFormasPagamento] = useState("");
+  const [pedidoMinimo, setPedidoMinimo] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
 
@@ -52,6 +61,14 @@ export default function ConfiguracoesPage() {
           setSlug(data.slug || "");
           setLogoUrl(data.logo_url || "");
           setCorTema(data.cor_tema || data.cor_primaria || "#10b981");
+          setEndereco(data.endereco || "");
+          setHorarioAtendimento(data.horario_atendimento || "");
+          setFormasPagamento(data.formas_pagamento || "");
+          setPedidoMinimo(data.pedido_minimo?.toString() || "");
+          setBannerUrl(data.banner_url || "");
+          setTemaFundo(data.tema_fundo || "escuro");
+          setEstiloFonte(data.estilo_fonte || "sans");
+          setInstagram(data.instagram || "");
         }
       } catch (err) {
         console.error(err);
@@ -95,6 +112,36 @@ export default function ConfiguracoesPage() {
     }
   };
 
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!e.target.files || e.target.files.length === 0) return;
+      const file = e.target.files[0];
+      setUploadingBanner(true);
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `banners/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('midia')
+        .upload(filePath, file);
+        
+      if (uploadError) throw uploadError;
+      
+      const { data: { publicUrl } } = supabase.storage
+        .from('midia')
+        .getPublicUrl(filePath);
+        
+      setBannerUrl(publicUrl);
+      showFeedback('success', 'Imagem de capa enviada com sucesso!');
+    } catch (error) {
+      console.error(error);
+      showFeedback('error', 'Erro ao enviar a imagem de capa.');
+    } finally {
+      setUploadingBanner(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId || !isSupabaseConfigured) return;
@@ -118,7 +165,15 @@ export default function ConfiguracoesPage() {
           whatsapp: numericWhatsapp,
           slug: formattedSlug,
           logo_url: logoUrl,
-          cor_tema: corTema
+          cor_tema: corTema,
+          endereco: endereco,
+          horario_atendimento: horarioAtendimento,
+          formas_pagamento: formasPagamento,
+          pedido_minimo: pedidoMinimo ? parseFloat(pedidoMinimo.replace(',', '.')) : null,
+          banner_url: bannerUrl,
+          tema_fundo: temaFundo,
+          estilo_fonte: estiloFonte,
+          instagram: instagram
         })
         .eq('owner_id', userId);
 
@@ -298,6 +353,188 @@ export default function ConfiguracoesPage() {
                      <span className="text-sm font-mono text-slate-400 p-2 bg-white/5 rounded-lg border border-white/10 uppercase">
                         {corTema}
                      </span>
+                  </div>
+               </div>
+
+               {/* Aparência do Cardápio */}
+               <div className="pt-6 pb-2 border-t border-white/10">
+                  <h3 className="text-lg font-bold text-white mb-1">Aparência do Cardápio</h3>
+                  <p className="text-sm text-slate-400">
+                     Personalize as cores, fontes e capa do seu cardápio público.
+                  </p>
+               </div>
+
+               {/* Imagem de Capa Field */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <ImageIcon className="w-4 h-4 text-slate-400" />
+                     Imagem de Capa (Banner)
+                  </label>
+                  <p className="text-xs text-slate-400 mb-3">
+                     Recomendamos uma imagem no formato paisagem (ex: 1200x400px).
+                  </p>
+                  <div className="flex items-center gap-6">
+                     {bannerUrl && (
+                        <div className="w-32 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
+                           {/* eslint-disable-next-line @next/next/no-img-element */}
+                           <img src={bannerUrl} alt="Banner Atual" className="w-full h-full object-cover" />
+                        </div>
+                     )}
+                     <div className="relative">
+                        <input 
+                           type="file" 
+                           accept="image/*"
+                           onChange={handleBannerUpload}
+                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                           disabled={uploadingBanner}
+                        />
+                        <button 
+                           type="button"
+                           disabled={uploadingBanner}
+                           className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium text-white transition-colors disabled:opacity-50"
+                        >
+                           {uploadingBanner ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                           {uploadingBanner ? "Enviando..." : bannerUrl ? "Trocar Capa" : "Enviar Capa"}
+                        </button>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Tema de Fundo Field */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <Monitor className="w-4 h-4 text-slate-400" />
+                     Tema de Fundo
+                  </label>
+                  <div className="relative">
+                     <select
+                        value={temaFundo}
+                        onChange={(e) => setTemaFundo(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all appearance-none"
+                     >
+                        <option value="escuro">Escuro (Dark Mode)</option>
+                        <option value="claro">Claro (Light Mode)</option>
+                     </select>
+                  </div>
+               </div>
+
+               {/* Estilo de Fonte Field */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <Type className="w-4 h-4 text-slate-400" />
+                     Estilo de Fonte
+                  </label>
+                  <div className="relative">
+                     <select
+                        value={estiloFonte}
+                        onChange={(e) => setEstiloFonte(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all appearance-none"
+                     >
+                        <option value="sans">Moderna (Sans-serif)</option>
+                        <option value="serif">Clássica (Serif)</option>
+                        <option value="mono">Despojada (Monospace)</option>
+                     </select>
+                  </div>
+               </div>
+
+               <div className="pt-6 pb-2 border-t border-white/10">
+                  <h3 className="text-lg font-bold text-white mb-1">Informações da Loja</h3>
+                  <p className="text-sm text-slate-400">
+                     Detalhes que serão exibidos para os clientes no cardápio.
+                  </p>
+               </div>
+
+               {/* Endereço */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <MapPin className="w-4 h-4 text-slate-400" />
+                     Endereço Completo
+                  </label>
+                  <div className="relative">
+                     <textarea
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all min-h-[80px]"
+                        placeholder="Rua, Número, Bairro, Cidade - Estado"
+                     />
+                  </div>
+               </div>
+
+               {/* Horário de Atendimento */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <Clock className="w-4 h-4 text-slate-400" />
+                     Horário de Atendimento
+                  </label>
+                  <div className="relative">
+                     <input
+                        type="text"
+                        value={horarioAtendimento}
+                        onChange={(e) => setHorarioAtendimento(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                        placeholder="Ex: Seg a Sex: 18h às 23h"
+                     />
+                  </div>
+               </div>
+
+               {/* Formas de Pagamento */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <CreditCard className="w-4 h-4 text-slate-400" />
+                     Formas de Pagamento
+                  </label>
+                  <div className="relative">
+                     <input
+                        type="text"
+                        value={formasPagamento}
+                        onChange={(e) => setFormasPagamento(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                        placeholder="Ex: Pix, Cartão de Crédito, Dinheiro"
+                     />
+                  </div>
+               </div>
+
+               {/* Pedido Mínimo */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <DollarSign className="w-4 h-4 text-slate-400" />
+                     Pedido Mínimo (R$)
+                  </label>
+                  <div className="relative">
+                     <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={pedidoMinimo}
+                        onChange={(e) => setPedidoMinimo(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                        placeholder="Ex: 50.00"
+                     />
+                  </div>
+               </div>
+
+               {/* Redes Sociais e Contato */}
+               <div className="pt-6 pb-2 border-t border-white/10">
+                  <h3 className="text-lg font-bold text-white mb-1">Redes Sociais e Contato</h3>
+                  <p className="text-sm text-slate-400">
+                     Adicione seus links sociais para os clientes acompanharem as novidades.
+                  </p>
+               </div>
+
+               {/* Instagram Field */}
+               <div>
+                  <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                     <Instagram className="w-4 h-4 text-slate-400" />
+                     Instagram
+                  </label>
+                  <div className="relative">
+                     <input
+                        type="text"
+                        value={instagram}
+                        onChange={(e) => setInstagram(e.target.value)}
+                        className="w-full bg-[#0a0a0a]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                        placeholder="Ex: @pizzariadoze ou link completo"
+                     />
                   </div>
                </div>
 

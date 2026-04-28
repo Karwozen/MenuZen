@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { ShoppingCart, Image as ImageIcon, Store, Loader2, UtensilsCrossed, Plus, Minus, X, MessageCircle } from "lucide-react";
+import { ShoppingCart, Image as ImageIcon, Store, Loader2, UtensilsCrossed, Plus, Minus, X, MessageCircle, Info, Home, ListOrdered, Tag, ChevronDown, ChevronUp, Instagram } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -15,6 +15,14 @@ interface Restaurante {
   cor_primaria?: string;
   whatsapp?: string;
   logo_url?: string;
+  endereco?: string;
+  horario_atendimento?: string;
+  formas_pagamento?: string;
+  pedido_minimo?: number;
+  banner_url?: string;
+  tema_fundo?: string;
+  estilo_fonte?: string;
+  instagram?: string;
 }
 
 interface Categoria {
@@ -50,6 +58,8 @@ export default function PublicMenuPage(props: PageProps) {
   // Cart State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let mounted = true;
@@ -110,6 +120,7 @@ export default function PublicMenuPage(props: PageProps) {
           setProdutos(prodList);
           if (catList.length > 0) {
             setActiveCategory(catList[0].id);
+            setExpandedCategories(new Set([catList[0].id]));
           }
         }
 
@@ -126,6 +137,22 @@ export default function PublicMenuPage(props: PageProps) {
   }, [slug]);
 
   const primaryColor = restaurante?.cor_tema || restaurante?.cor_primaria || '#10b981'; // default emerald-500
+  const isLight = restaurante?.tema_fundo === 'claro';
+  const fontClass = 
+    restaurante?.estilo_fonte === 'serif' ? 'font-serif' :
+    restaurante?.estilo_fonte === 'mono' ? 'font-mono' : 'font-sans';
+
+  const toggleCategory = (id: string) => {
+    setExpandedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   // Cart Functions
   const addToCart = (produto: Produto) => {
@@ -178,7 +205,7 @@ export default function PublicMenuPage(props: PageProps) {
 
   if (loading) {
      return (
-       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+       <div className={`min-h-screen flex items-center justify-center font-sans bg-[#050505]`}>
           <Loader2 className="w-8 h-8 text-white animate-spin" />
        </div>
      );
@@ -186,7 +213,7 @@ export default function PublicMenuPage(props: PageProps) {
 
   if (!restaurante) {
      return (
-        <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
+        <div className={`min-h-screen flex items-center justify-center p-4 font-sans bg-[#050505]`}>
            <div className="text-center bg-white/5 border border-white/10 p-8 rounded-2xl max-w-sm w-full">
               <Store className="w-16 h-16 text-slate-500 mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-white mb-2">Restaurante não encontrado</h1>
@@ -197,25 +224,52 @@ export default function PublicMenuPage(props: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pb-28">
+    <div className={`min-h-screen pb-28 ${fontClass} ${isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#050505] text-white'}`}>
        {/* Header */}
-       <header className="pt-12 pb-6 px-4 bg-white/5 border-b border-white/10 sticky top-0 z-20 backdrop-blur-md">
-          <div className="flex flex-col items-center justify-center gap-4">
-             {restaurante.logo_url && (
-                <div className="w-20 h-20 rounded-full overflow-hidden border-2 shadow-xl" style={{ borderColor: primaryColor }}>
-                   {/* eslint-disable-next-line @next/next/no-img-element */}
+       <header className="relative pb-6 bg-transparent">
+          {/* Cover Banner */}
+          <div 
+             className="w-full h-40 object-cover"
+             style={{ 
+                backgroundColor: restaurante.banner_url ? 'transparent' : primaryColor,
+                backgroundImage: restaurante.banner_url ? `url(${restaurante.banner_url})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+             }}
+          />
+          
+          <div className="px-4 relative flex flex-col items-center -mt-10">
+             {/* Logo Container */}
+             <div 
+                className={`w-20 h-20 rounded-full overflow-hidden border-4 shadow-xl flex-shrink-0 flex items-center justify-center ${isLight ? 'border-slate-50 bg-white' : 'border-[#050505] bg-[#111]'}`}
+             >
+                {restaurante.logo_url ? (
+                   /* eslint-disable-next-line @next/next/no-img-element */
                    <img src={restaurante.logo_url} alt={`Logo ${restaurante.nome}`} className="w-full h-full object-cover" />
-                </div>
-             )}
-             <h1 className="text-3xl font-bold text-center tracking-tight" style={{ color: primaryColor }}>
-                {restaurante.nome}
-             </h1>
+                ) : (
+                   <Store className={`w-10 h-10 ${isLight ? 'text-slate-300' : 'text-slate-600'}`} />
+                )}
+             </div>
+             
+             {/* Info */}
+             <div className="flex flex-col items-center mt-3">
+                <h1 className="text-2xl font-black text-center tracking-tight text-inherit">
+                   {restaurante.nome}
+                </h1>
+                <button 
+                  onClick={() => setIsInfoModalOpen(true)} 
+                  className={`mt-1 flex items-center gap-1 text-sm font-medium transition-colors ${isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-slate-300'}`}
+                >
+                  <Info className="w-4 h-4" />
+                  Ver informações da loja
+                </button>
+             </div>
           </div>
        </header>
 
        {/* Category Navigation */}
        {categorias.length > 0 && (
-          <div className="sticky top-[89px] z-10 bg-[#050505]/90 backdrop-blur-xl border-b border-white/5 py-4 px-4 shadow-xl">
+          <div className={`sticky top-0 z-10 backdrop-blur-xl border-b py-4 px-4 shadow-xl ${isLight ? 'bg-slate-50/90 border-slate-200 shadow-slate-200/50' : 'bg-[#050505]/90 border-white/5 shadow-black/50'}`}>
              <div className="flex overflow-x-auto gap-3 snap-x pb-2 scrollbar-none" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {categorias.map(cat => (
                    <button
@@ -226,8 +280,8 @@ export default function PublicMenuPage(props: PageProps) {
                       }}
                       className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold snap-start transition-all ${
                          activeCategory === cat.id 
-                           ? 'bg-white text-black shadow-lg' 
-                           : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
+                           ? (isLight ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-black shadow-lg') 
+                           : (isLight ? 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10')
                       }`}
                       style={activeCategory === cat.id ? { backgroundColor: primaryColor, color: '#fff', borderColor: primaryColor } : {}}
                    >
@@ -241,7 +295,7 @@ export default function PublicMenuPage(props: PageProps) {
        {/* Product List */}
        <main className="px-4 py-8 max-w-3xl mx-auto space-y-12">
           {categorias.length === 0 || produtos.length === 0 ? (
-             <div className="text-center text-slate-500 mt-12 flex flex-col items-center">
+             <div className={`text-center mt-12 flex flex-col items-center ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
                  <UtensilsCrossed className="w-12 h-12 mb-4 opacity-20" />
                  <p>Nenhum produto disponível no momento.</p>
              </div>
@@ -251,23 +305,34 @@ export default function PublicMenuPage(props: PageProps) {
                 if (catProducts.length === 0) return null;
 
                 return (
-                   <section key={categoria.id} id={`categoria-${categoria.id}`} className="scroll-mt-48">
-                      <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                         <span className="w-1.5 h-6 rounded-full" style={{ backgroundColor: primaryColor }} />
-                         {categoria.nome}
-                      </h2>
+                   <section key={categoria.id} id={`categoria-${categoria.id}`} className="scroll-mt-48 transition-all">
+                      <button 
+                         onClick={() => toggleCategory(categoria.id)}
+                         className={`w-full flex items-center justify-between mb-2 p-3 rounded-2xl transition-colors border ${isLight ? 'bg-white hover:bg-slate-50 border-slate-200' : 'bg-white/5 hover:bg-white/10 border-white/10'}`}
+                      >
+                         <h2 className="text-xl font-bold flex items-center gap-3">
+                            <span className="w-1.5 h-6 rounded-full" style={{ backgroundColor: primaryColor }} />
+                            {categoria.nome}
+                         </h2>
+                         {expandedCategories.has(categoria.id) ? (
+                            <ChevronUp className={`w-5 h-5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`} />
+                         ) : (
+                            <ChevronDown className={`w-5 h-5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`} />
+                         )}
+                      </button>
                       
-                      <div className="space-y-4">
-                         {catProducts.map(produto => (
-                            <div key={produto.id} className="bg-white/5 border border-white/10 rounded-2xl p-3 flex gap-4 hover:bg-white/10 transition-colors">
+                      {expandedCategories.has(categoria.id) && (
+                        <div className="space-y-4 mt-4 animate-in slide-in-from-top-2 fade-in">
+                           {catProducts.map(produto => (
+                              <div key={produto.id} className={`rounded-2xl p-3 flex gap-4 transition-colors border ${isLight ? 'bg-white hover:bg-slate-50 border-slate-200 shadow-sm' : 'bg-white/5 hover:bg-white/10 border-white/10'}`}>
                                {/* Image */}
                                {produto.imagem_url ? (
-                                  <div className="w-24 h-24 shrink-0 bg-[#0a0a0a] rounded-xl overflow-hidden shadow-lg border border-white/5">
+                                  <div className={`w-24 h-24 shrink-0 rounded-xl overflow-hidden shadow-sm border flex items-center justify-center ${isLight ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-[#0a0a0a] border-white/5 text-slate-600'}`}>
                                      {/* eslint-disable-next-line @next/next/no-img-element */}
                                      <img src={produto.imagem_url} alt={produto.nome} className="w-full h-full object-cover" />
                                   </div>
                                ) : (
-                                  <div className="w-24 h-24 shrink-0 bg-white/5 rounded-xl border border-white/5 flex items-center justify-center text-slate-600">
+                                  <div className={`w-24 h-24 shrink-0 rounded-xl overflow-hidden shadow-sm border flex items-center justify-center ${isLight ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-white/5 border-white/5 text-slate-600'}`}>
                                      <ImageIcon className="w-6 h-6" />
                                   </div>
                                )}
@@ -275,9 +340,9 @@ export default function PublicMenuPage(props: PageProps) {
                                {/* Info */}
                                <div className="flex-1 flex flex-col justify-between py-1 pr-1">
                                   <div>
-                                     <h3 className="font-semibold text-white leading-tight">{produto.nome}</h3>
+                                     <h3 className={`font-semibold leading-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>{produto.nome}</h3>
                                      {produto.descricao && (
-                                        <p className="text-slate-400 text-xs mt-1.5 line-clamp-2 leading-relaxed">{produto.descricao}</p>
+                                        <p className={`text-xs mt-1.5 line-clamp-2 leading-relaxed ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{produto.descricao}</p>
                                      )}
                                   </div>
                                   <div className="mt-3 flex items-center justify-between">
@@ -287,19 +352,19 @@ export default function PublicMenuPage(props: PageProps) {
                                       
                                       {/* Add to cart controls */}
                                       {cart.find(c => c.produto.id === produto.id) ? (
-                                         <div className="flex items-center bg-white/10 rounded-full">
+                                         <div className={`flex items-center rounded-full border ${isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/10 border-white/5'}`}>
                                             <button 
                                                 onClick={() => removeFromCart(produto.id)} 
-                                                className="p-1.5 text-white hover:bg-white/10 rounded-full transition-colors"
+                                                className={`p-1.5 rounded-full transition-colors ${isLight ? 'text-slate-700 hover:bg-slate-200' : 'text-white hover:bg-white/10'}`}
                                             >
                                                <Minus className="w-4 h-4" />
                                             </button>
-                                            <span className="w-6 text-center text-sm font-semibold text-white">
+                                            <span className={`w-6 text-center text-sm font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>
                                                {cart.find(c => c.produto.id === produto.id)?.quantidade}
                                             </span>
                                             <button 
                                                 onClick={() => addToCart(produto)} 
-                                                className="p-1.5 text-white hover:bg-white/10 rounded-full transition-colors"
+                                                className={`p-1.5 rounded-full transition-colors ${isLight ? 'text-slate-700 hover:bg-slate-200' : 'text-white hover:bg-white/10'}`}
                                             >
                                                <Plus className="w-4 h-4" />
                                             </button>
@@ -318,73 +383,76 @@ export default function PublicMenuPage(props: PageProps) {
                             </div>
                          ))}
                       </div>
+                      )}
                    </section>
                 )
              })
           )}
        </main>
 
-       {/* FAB */}
-       {totalItems > 0 && !isModalOpen && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent pointer-events-none pb-8 pt-12 z-40 transition-all">
-             <div className="max-w-3xl mx-auto pointer-events-auto">
-                <button 
-                   onClick={() => setIsModalOpen(true)}
-                   className="w-full flex items-center justify-between p-4 rounded-2xl shadow-2xl transition-transform hover:scale-[1.02] active:scale-95 border border-black/10"
-                   style={{ backgroundColor: primaryColor, color: '#fff' }}
-                >
-                   <div className="flex items-center gap-3">
-                      <div className="bg-black/20 p-2.5 rounded-full">
-                         <ShoppingCart className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="text-left">
-                         <span className="block font-semibold tracking-wide">Meu Pedido</span>
-                         <span className="block text-xs opacity-90">{totalItems} {totalItems === 1 ? 'item' : 'itens'}</span>
-                      </div>
-                   </div>
-                   <span className="font-bold tracking-wide text-lg">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPrice)}
-                   </span>
-                </button>
-             </div>
-          </div>
-       )}
+       {/* Bottom Nav Bar */}
+       <div className={`fixed bottom-0 left-0 right-0 border-t px-6 py-3 z-30 flex justify-between items-center pb-safe ${isLight ? 'bg-white border-slate-200' : 'bg-[#111] border-white/10'}`}>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth'})} className={`flex flex-col items-center gap-1 transition-colors ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
+              <Home className="w-6 h-6" />
+              <span className="text-[10px] font-medium">Início</span>
+          </button>
+          
+          <button onClick={() => alert("Em breve")} className={`flex flex-col items-center gap-1 transition-colors ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
+              <ListOrdered className="w-6 h-6" />
+              <span className="text-[10px] font-medium">Pedidos</span>
+          </button>
+          
+          <button onClick={() => alert("Sem promoções hoje")} className={`flex flex-col items-center gap-1 transition-colors ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
+              <Tag className="w-6 h-6" />
+              <span className="text-[10px] font-medium">Promos</span>
+          </button>
+          
+          <button onClick={() => setIsModalOpen(true)} className={`flex flex-col items-center gap-1 transition-colors relative ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
+              <ShoppingCart className="w-6 h-6" style={{ color: totalItems > 0 ? primaryColor : undefined }} />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-[#111]">
+                  {totalItems}
+                </span>
+              )}
+              <span className="text-[10px] font-medium" style={{ color: totalItems > 0 ? primaryColor : undefined }}>Carrinho</span>
+          </button>
+       </div>
 
        {/* Cart Modal */}
        {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
-             <div className="w-full max-w-lg bg-[#111] sm:border border-white/10 sm:rounded-3xl rounded-t-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-in slide-in-from-bottom-5">
-                <div className="flex items-center justify-between p-5 border-b border-white/5">
-                   <h2 className="text-xl font-bold flex items-center gap-2">
+             <div className={`w-full max-w-lg sm:border sm:rounded-3xl rounded-t-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-in slide-in-from-bottom-5 ${isLight ? 'bg-white border-slate-200' : 'bg-[#111] border-white/10'}`}>
+                <div className={`flex items-center justify-between p-5 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                   <h2 className="text-xl font-bold flex items-center gap-2 text-inherit">
                        <ShoppingCart className="w-5 h-5" style={{ color: primaryColor }} />
                        Seu Pedido
                    </h2>
-                   <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-white transition-colors bg-white/5 rounded-full">
+                   <button onClick={() => setIsModalOpen(false)} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200' : 'text-slate-400 hover:text-white bg-white/5 hover:bg-white/10'}`}>
                       <X className="w-5 h-5" />
                    </button>
                 </div>
 
                 <div className="overflow-y-auto p-5 space-y-4">
                    {cart.length === 0 ? (
-                      <div className="text-center text-slate-500 py-8">
+                      <div className={`text-center py-8 ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
                          <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-20" />
                          <p>Sua sacola está vazia.</p>
                       </div>
                    ) : (
                       cart.map(item => (
-                         <div key={item.produto.id} className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0 last:pb-0">
+                         <div key={item.produto.id} className={`flex items-center justify-between border-b pb-4 last:border-0 last:pb-0 ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
                              <div>
-                                <h4 className="font-semibold text-white">{item.produto.nome}</h4>
-                                <p className="text-slate-400 text-sm mt-0.5">
+                                <h4 className={`font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>{item.produto.nome}</h4>
+                                <p className={`text-sm mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.produto.preco)}
                                 </p>
                              </div>
-                             <div className="flex items-center bg-white/5 rounded-full border border-white/10">
-                                <button onClick={() => removeFromCart(item.produto.id)} className="p-2 text-white hover:bg-white/10 rounded-full transition-colors">
+                             <div className={`flex items-center rounded-full border ${isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'}`}>
+                                <button onClick={() => removeFromCart(item.produto.id)} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-700 hover:bg-slate-200' : 'text-white hover:bg-white/10'}`}>
                                    <Minus className="w-4 h-4" />
                                 </button>
-                                <span className="w-6 text-center text-sm font-semibold">{item.quantidade}</span>
-                                <button onClick={() => addToCart(item.produto)} className="p-2 text-white hover:bg-white/10 rounded-full transition-colors">
+                                <span className={`w-6 text-center text-sm font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>{item.quantidade}</span>
+                                <button onClick={() => addToCart(item.produto)} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-700 hover:bg-slate-200' : 'text-white hover:bg-white/10'}`}>
                                    <Plus className="w-4 h-4" />
                                 </button>
                              </div>
@@ -394,23 +462,96 @@ export default function PublicMenuPage(props: PageProps) {
                 </div>
 
                 {cart.length > 0 && (
-                   <div className="p-5 border-t border-white/5 bg-[#161616]">
+                   <div className={`p-5 border-t ${isLight ? 'border-slate-100 bg-slate-50' : 'border-white/5 bg-[#161616]'}`}>
                       <div className="flex items-center justify-between mb-4">
-                         <span className="text-slate-400">Total a pagar:</span>
-                         <span className="text-2xl font-bold text-white">
+                         <span className={isLight ? 'text-slate-500' : 'text-slate-400'}>Total a pagar:</span>
+                         <span className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPrice)}
                          </span>
                       </div>
-                      <button 
-                         onClick={enviarPedidoWhatsApp}
-                         className="w-full py-4 rounded-xl flex items-center justify-center gap-2 text-white font-bold text-lg transition-transform hover:scale-[1.02] active:scale-95 shadow-xl"
-                         style={{ backgroundColor: primaryColor }}
-                      >
-                         <MessageCircle className="w-6 h-6" />
-                         Fazer Pedido por WhatsApp
-                      </button>
+                      
+                      {(restaurante.pedido_minimo || 0) > totalPrice ? (
+                        <div className={`w-full py-4 rounded-xl flex items-center justify-center text-center font-semibold cursor-not-allowed border ${isLight ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white/5 text-slate-400 border-white/10'}`}>
+                           Falta {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format((restaurante.pedido_minimo || 0) - totalPrice)} para o pedido mínimo
+                        </div>
+                      ) : (
+                        <button 
+                           onClick={enviarPedidoWhatsApp}
+                           className="w-full py-4 rounded-xl flex items-center justify-center gap-2 text-white font-bold text-lg transition-transform hover:scale-[1.02] active:scale-95 shadow-xl"
+                           style={{ backgroundColor: primaryColor }}
+                        >
+                           <MessageCircle className="w-6 h-6" />
+                           Fazer Pedido por WhatsApp
+                        </button>
+                      )}
                    </div>
                 )}
+             </div>
+          </div>
+       )}
+
+       {/* Info Modal */}
+       {isInfoModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
+             <div className={`w-full max-w-lg sm:border sm:rounded-3xl rounded-t-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-in slide-in-from-bottom-5 ${isLight ? 'bg-white border-slate-200' : 'bg-[#111] border-white/10'}`}>
+                <div className={`flex items-center justify-between p-5 border-b ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                   <h2 className="text-xl font-bold flex items-center gap-2 text-inherit">
+                       <Info className="w-5 h-5" style={{ color: primaryColor }} />
+                       Informações da Loja
+                   </h2>
+                   <button onClick={() => setIsInfoModalOpen(false)} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200' : 'text-slate-400 hover:text-white bg-white/5 hover:bg-white/10'}`}>
+                      <X className="w-5 h-5" />
+                   </button>
+                </div>
+                
+                <div className="p-5 space-y-6">
+                   <div>
+                      <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Endereço</h3>
+                      <p className={`text-base leading-relaxed break-words whitespace-pre-wrap ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {restaurante.endereco || "Não informado"}
+                      </p>
+                   </div>
+                   
+                   <div>
+                      <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Horário de Atendimento</h3>
+                      <p className={`text-base leading-relaxed break-words whitespace-pre-wrap ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {restaurante.horario_atendimento || "Não informado"}
+                      </p>
+                   </div>
+                   
+                   <div>
+                      <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Formas de Pagamento</h3>
+                      <p className={`text-base leading-relaxed break-words whitespace-pre-wrap ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {restaurante.formas_pagamento || "Não informado"}
+                      </p>
+                   </div>
+                   
+                   <div>
+                      <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Pedido Mínimo</h3>
+                      <p className="text-base font-medium" style={{ color: primaryColor }}>
+                        {restaurante.pedido_minimo 
+                          ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(restaurante.pedido_minimo) 
+                          : "Sem valor mínimo"}
+                      </p>
+                   </div>
+
+                   <div>
+                      <h3 className={`text-sm font-semibold tracking-wider mb-3 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Redes Sociais</h3>
+                      {restaurante.instagram ? (
+                         <a 
+                            href={restaurante.instagram.startsWith('http') ? restaurante.instagram : `https://instagram.com/${restaurante.instagram.replace('@', '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-colors ${isLight ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-white/5 text-white hover:bg-white/10'}`}
+                         >
+                            <Instagram className="w-5 h-5" style={{ color: primaryColor }} />
+                            {restaurante.instagram.startsWith('http') ? 'Instagram' : restaurante.instagram}
+                         </a>
+                      ) : (
+                         <p className={`text-base leading-relaxed ${isLight ? 'text-slate-900' : 'text-white'}`}>Não informado</p>
+                      )}
+                   </div>
+                </div>
              </div>
           </div>
        )}

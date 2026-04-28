@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { clsx } from "clsx";
+import Link from "next/link";
 
 export function Pricing() {
   const [annual, setAnnual] = useState(false);
@@ -10,45 +11,42 @@ export function Pricing() {
   const plans = [
     {
       name: "Iniciante",
-      description: "Perfeito para negócios locais começando a digitalizar.",
+      description: "Para testar a conversão sem gastar nada.",
       monthlyPrice: 0,
       annualPrice: 0,
       popular: false,
       features: [
-        "Cardápio Digital Ilimitado",
-        "Pedidos via Link (Sem IA)",
-        "Painel de Gerenciamento",
-        "Suporte por Email",
-        "Até 30 Mesas/Comandas"
+        "Até 30 produtos",
+        "Link Personalizado",
+        "Pedidos no WhatsApp",
+        "Painel de Gerenciamento"
       ]
     },
     {
-      name: "Pro",
+      name: "Profissional",
       description: "O mais escolhido. Automação completa para turbinar vendas.",
-      monthlyPrice: 49,
-      annualPrice: 39,
+      monthlyPrice: 49.90,
+      annualPrice: 39.90,
       popular: true,
       features: [
-        "Tudo do plano Iniciante",
-        "Robô MenuFlow IA no WhatsApp",
-        "CRM e Fidelização",
-        "PDV Frente de Caixa Rápido",
-        "Suporte Prioritário VIP",
-        "Mesas/Comandas Ilimitadas"
+        "Produtos Ilimitados",
+        "Temas e Cores Premium",
+        "Gerador de QR Code",
+        "Logo do Restaurante",
+        "Mesas/Comandas Temporárias"
       ]
     },
     {
       name: "VIP",
       description: "Para redes e restaurantes de alto volume.",
-      monthlyPrice: 99,
-      annualPrice: 79,
+      monthlyPrice: 99.90,
+      annualPrice: 79.90,
       popular: false,
       features: [
-        "Tudo do plano Pro",
-        "Múltiplas Lojas/Franquias",
-        "Integração com iFood e ERPs",
-        "Relatórios Avançados Customizados",
-        "Gerente de Conta Dedicado"
+        "Tudo do plano Profissional",
+        "Fura-fila no Suporte VIP",
+        "Mentoria de Vendas",
+        "Relatórios Avançados Customizados"
       ]
     }
   ];
@@ -110,7 +108,7 @@ export function Pricing() {
               <div className="mb-8 flex items-baseline text-white">
                 <span className="text-2xl font-bold mr-1 text-slate-500">R$</span>
                 <span className="text-5xl font-black tracking-tighter">
-                  {annual ? plan.annualPrice : plan.monthlyPrice}
+                  {new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(annual ? plan.annualPrice : plan.monthlyPrice)}
                 </span>
                 <span className="ml-2 text-sm font-medium text-slate-500">/mês</span>
               </div>
@@ -124,7 +122,7 @@ export function Pricing() {
                 ))}
               </ul>
 
-              <a 
+              <Link 
                 href="/register"
                 className={clsx(
                   "mt-auto block w-full text-center text-sm font-bold py-3.5 px-6 rounded-xl transition-all",
@@ -132,7 +130,7 @@ export function Pricing() {
                 )}
               >
                 Começar 7 Dias Grátis
-              </a>
+              </Link>
             </div>
           ))}
         </div>

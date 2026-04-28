@@ -7,15 +7,15 @@ export function Hero() {
       <div className="container mx-auto px-4 text-center">
         <div className="inline-flex items-center px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-8 rounded-full uppercase tracking-widest backdrop-blur-sm">
           <span className="flex h-2 w-2 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
-          A Nova Era da Gestão Gastronômica
+          A Revolução do Delivery Independente
         </div>
         
         <h1 className="mx-auto max-w-5xl text-5xl font-black tracking-tight sm:text-6xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-200 to-slate-500 pb-4">
-          Transforme seu WhatsApp em<br className="hidden md:block" /> uma <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 pb-2">Máquina de Vendas</span>
+          Liberte seu restaurante das <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500 pb-2">taxas abusivas</span>.<br className="hidden md:block" /> Tenha seu aplicativo próprio.
         </h1>
         
         <p className="mx-auto mt-6 max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed font-light">
-          Automatize pedidos, encante seus clientes e gerencie múltiplas lojas em um só lugar. O painel definitivo desenhado para escala e alta performance.
+          Pare de deixar 27% do seu lucro nos aplicativos de delivery. Crie seu cardápio digital, receba pedidos direto no seu WhatsApp e construa a sua própria base de clientes fiéis.
         </p>
         
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">

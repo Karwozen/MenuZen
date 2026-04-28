@@ -2,6 +2,7 @@ import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { SocialProof } from "@/components/social-proof";
 import { Features } from "@/components/features";
+import { Strategy } from "@/components/strategy";
 import { Pricing } from "@/components/pricing";
 import { PreRegisterForm } from "@/components/pre-register-form";
 import { Footer } from "@/components/footer";
@@ -14,6 +15,7 @@ export default function LandingPage() {
         <Hero />
         <SocialProof />
         <Features />
+        <Strategy />
         <Pricing />
         <PreRegisterForm />
       </main>
