@@ -53,7 +53,7 @@ export default function LoginPage() {
             <div className="bg-gradient-to-tr from-indigo-500 to-purple-500 p-2 rounded-xl shadow-lg shadow-indigo-500/20">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-white">MenuFlow</span>
+            <span className="text-2xl font-black tracking-tight text-white">MenuZen</span>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-white">Bem-vindo de volta</h1>
           <p className="text-slate-400 mt-2 text-sm text-center">Entre para gerenciar seu restaurante e acompanhar suas métricas.</p>

@@ -260,7 +260,7 @@ export default function ConfiguracoesPage() {
                   </p>
                   <div className="flex bg-[#0a0a0a]/50 border border-white/10 rounded-xl overflow-hidden focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/50 transition-all">
                      <span className="px-4 py-3 bg-white/5 text-slate-400 border-r border-white/5 text-sm select-none flex items-center">
-                        menuflow.app/
+                        menuzen.app/
                      </span>
                      <input
                         type="text"

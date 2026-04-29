@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'MenuFlow | Automação e Cardápio Digital para Restaurantes',
+  title: 'MenuZen | Automação e Cardápio Digital para Restaurantes',
   description: 'Automatize seu restaurante com nosso Cardápio Digital e Robô de WhatsApp com IA.',
 };
 

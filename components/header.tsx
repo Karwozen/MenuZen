@@ -9,7 +9,7 @@ export function Header() {
           <div className="bg-gradient-to-tr from-orange-500 to-red-500 p-1.5 rounded-lg shadow-lg shadow-orange-500/20">
             <Zap className="w-5 h-5 text-white" />
           </div>
-          <span className="font-extrabold text-xl tracking-tight text-white">MenuFlow</span>
+          <span className="font-extrabold text-xl tracking-tight text-white">MenuZen</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">

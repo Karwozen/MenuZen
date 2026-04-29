@@ -276,7 +276,7 @@ export default function CardapioPage() {
 
       <div>
         <h1 className="text-2xl font-bold text-white tracking-tight">Gerenciamento de Cardápio</h1>
-        <p className="text-sm text-slate-400 mt-1">Organize suas categorias e produtos do MenuFlow com facilidade.</p>
+        <p className="text-sm text-slate-400 mt-1">Organize suas categorias e produtos do MenuZen com facilidade.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

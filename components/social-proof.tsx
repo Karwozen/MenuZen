@@ -3,7 +3,7 @@ export function SocialProof() {
     <section id="depoimentos" className="py-12 border-y border-white/5 bg-white/[0.01]">
       <div className="container mx-auto px-4">
         <p className="text-center text-sm font-medium text-slate-500 mb-8 uppercase tracking-widest">
-          Restaurantes de ponta que já usam MenuFlow
+          Restaurantes de ponta que já usam MenuZen
         </p>
         <div className="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-700 select-none pointer-events-none">
           <h3 className="text-2xl font-bold font-serif italic text-white">Osteria Bella</h3>

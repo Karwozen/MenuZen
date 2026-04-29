@@ -51,7 +51,7 @@ export function Hero() {
             </div>
             <div className="flex-1 flex justify-center">
               <div className="h-6 w-48 bg-white/5 rounded-md flex items-center justify-center border border-white/5">
-                <span className="text-[10px] text-slate-500 font-medium">menuflow.app/dashboard</span>
+                <span className="text-[10px] text-slate-500 font-medium">menuzen.app/dashboard</span>
               </div>
             </div>
           </div>

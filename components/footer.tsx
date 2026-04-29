@@ -12,7 +12,7 @@ export function Footer() {
               <div className="bg-gradient-to-tr from-orange-500 to-red-500 p-1.5 rounded-lg shadow-lg shadow-orange-500/20">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-extrabold tracking-tight text-white">MenuFlow</span>
+              <span className="text-xl font-extrabold tracking-tight text-white">MenuZen</span>
             </Link>
             <p className="text-slate-400 text-sm mb-6 leading-relaxed">
               A plataforma definitiva para digitalizar o seu restaurante, encantar clientes com IA e escalar as suas vendas.
@@ -67,7 +67,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} MenuFlow. Todos os direitos reservados.
+            © {new Date().getFullYear()} MenuZen. Todos os direitos reservados.
           </p>
           <div className="flex gap-4 text-sm text-slate-500 font-medium">
             Desenvolvido com <span className="text-orange-500">⚡</span> Next.js e AI

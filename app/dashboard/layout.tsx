@@ -69,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="bg-gradient-to-tr from-indigo-500 to-purple-500 p-1.5 rounded-lg">
               <Zap className="w-4 h-4 text-white" />
             </div>
-            <span className="font-extrabold text-lg tracking-tight text-white">MenuFlow</span>
+            <span className="font-extrabold text-lg tracking-tight text-white">MenuZen</span>
           </Link>
         </div>
 
@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="bg-gradient-to-tr from-indigo-500 to-purple-500 p-1.5 rounded-lg">
               <Zap className="w-4 h-4 text-white" />
             </div>
-            <span className="font-extrabold tracking-tight text-white">MenuFlow</span>
+            <span className="font-extrabold tracking-tight text-white">MenuZen</span>
           </Link>
           <div className="flex items-center gap-4">
             {slug && (

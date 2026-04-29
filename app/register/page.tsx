@@ -77,7 +77,7 @@ export default function RegisterPage() {
             <div className="bg-gradient-to-tr from-indigo-500 to-purple-500 p-2 rounded-xl shadow-lg shadow-indigo-500/20">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-white">MenuFlow</span>
+            <span className="text-2xl font-black tracking-tight text-white">MenuZen</span>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-white">Crie sua conta</h1>
           <p className="text-slate-400 mt-2 text-sm text-center">Comece a transformar seu delivery em poucos passos.</p>
@@ -106,7 +106,7 @@ export default function RegisterPage() {
               />
               {restaurantName && (
                 <p className="text-xs text-slate-500 mt-2 font-mono">
-                  Seu link será: menuflow.app/{generateSlug(restaurantName)}
+                  Seu link será: menuzen.app/{generateSlug(restaurantName)}
                 </p>
               )}
             </div>
