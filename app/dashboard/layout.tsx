@@ -12,7 +12,9 @@ import {
   LogOut,
   Zap,
   Settings,
-  ExternalLink
+  ExternalLink,
+  History,
+  Trash2
 } from "lucide-react";
 import { clsx } from "clsx";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -45,7 +47,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navigation = [
     { name: "Início", href: "/dashboard", icon: LayoutDashboard },
     { name: "Cardápio", href: "/dashboard/cardapio", icon: MenuSquare },
-    { name: "Pedidos", href: "/dashboard/orders", icon: ShoppingBag },
+    { name: "Histórico", href: "/dashboard/historico", icon: History },
+    { name: "Lixeira", href: "/dashboard/lixeira", icon: Trash2 },
     { name: "Configuração do Robô IA", href: "/dashboard/ai-bot", icon: Bot },
     { name: "Configurações", href: "/dashboard/configuracoes", icon: Settings },
     { name: "Assinatura", href: "/dashboard/subscription", icon: CreditCard },

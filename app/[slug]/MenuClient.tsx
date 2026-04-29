@@ -58,8 +58,19 @@ export default function PublicMenuPage(props: PageProps) {
   // Cart State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [clienteNome, setClienteNome] = useState("");
+  const [tipoEntrega, setTipoEntrega] = useState<'delivery' | 'local'>('delivery');
+  const [mesa, setMesa] = useState('');
+  const [rua, setRua] = useState('');
+  const [numero, setNumero] = useState('');
+  const [bairro, setBairro] = useState('');
+  const [complemento, setComplemento] = useState('');
+  const [telefoneCli, setTelefoneCli] = useState('');
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [isMyOrdersModalOpen, setIsMyOrdersModalOpen] = useState(false);
+  const [meusPedidos, setMeusPedidos] = useState<any[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -136,6 +147,70 @@ export default function PublicMenuPage(props: PageProps) {
     return () => { mounted = false; }
   }, [slug]);
 
+  useEffect(() => {
+    const savedData = localStorage.getItem('menuzen_cliente_data');
+    if (savedData) {
+      try {
+        const data = JSON.parse(savedData);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (data.clienteNome) setClienteNome(data.clienteNome);
+        if (data.telefoneCli) setTelefoneCli(data.telefoneCli);
+        if (data.rua) setRua(data.rua);
+        if (data.numero) setNumero(data.numero);
+        if (data.bairro) setBairro(data.bairro);
+        if (data.complemento) setComplemento(data.complemento);
+      } catch (e) {
+        console.error("Erro ao carregar dados do localStorage", e);
+      }
+    }
+  }, []);
+
+  const fetchMeusPedidos = async () => {
+    const saved = JSON.parse(localStorage.getItem('menuzen_meus_pedidos') || '[]');
+    if (saved.length === 0 || !restaurante?.id) return;
+    try {
+      const { data, error } = await supabase
+        .from('pedidos')
+        .select('*')
+        .in('id', saved)
+        .eq('restaurante_id', restaurante.id)
+        .order('created_at', { ascending: false });
+
+      if (data) {
+        setMeusPedidos(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isMyOrdersModalOpen && restaurante?.id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchMeusPedidos();
+      interval = setInterval(fetchMeusPedidos, 5000);
+    }
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMyOrdersModalOpen, restaurante?.id]);
+
+  const cancelarMeuPedido = async (orderId: string) => {
+    try {
+      const { error } = await supabase
+        .from('pedidos')
+        .update({ status: 'cancelado' })
+        .eq('id', orderId);
+
+      if (error) throw error;
+      alert("Seu pedido foi cancelado com sucesso.");
+      fetchMeusPedidos();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao cancelar pedido.");
+    }
+  };
+
   const primaryColor = restaurante?.cor_tema || restaurante?.cor_primaria || '#10b981'; // default emerald-500
   const isLight = restaurante?.tema_fundo === 'claro';
   const fontClass = 
@@ -180,27 +255,98 @@ export default function PublicMenuPage(props: PageProps) {
   const totalItems = cart.reduce((acc, item) => acc + item.quantidade, 0);
   const totalPrice = cart.reduce((acc, item) => acc + (item.produto.preco * item.quantidade), 0);
 
-  const enviarPedidoWhatsApp = () => {
-    if (cart.length === 0) return;
-
-    let text = "*Novo Pedido!*\n\n*Resumo do Pedido:*\n";
-    cart.forEach(item => {
-      text += `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}\n`;
-    });
-    text += `\n*Total:* R$ ${totalPrice.toFixed(2)}`;
-
-    const telefone = restaurante?.whatsapp || '';
-    if (!telefone) {
-       alert("Este restaurante ainda não configurou um número de WhatsApp para receber pedidos.");
+  const enviarPedidoWhatsApp = async () => {
+    if (cart.length === 0 || !clienteNome) return;
+    if (tipoEntrega === 'delivery' && (!rua || !numero || !bairro || !telefoneCli)) {
+       alert("Por favor, preencha todos os campos obrigatórios de endereço e telefone.");
        return;
     }
-    
-    // remover todos caracteres não numericos
-    const foneNumerico = telefone.replace(/\D/g, '');
-    
-    // open whatsapp
-    const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/${foneNumerico}?text=${encodedText}`, '_blank');
+
+    try {
+      // 0. Salvar no localStorage para facilitar compras futuras
+      const clienteData = {
+        clienteNome,
+        telefoneCli,
+        rua,
+        numero,
+        bairro,
+        complemento
+      };
+      localStorage.setItem('menuzen_cliente_data', JSON.stringify(clienteData));
+
+      // Formatar endereço
+      const enderecoFormatado = tipoEntrega === 'delivery' 
+        ? `${rua}, ${numero} - ${bairro}${complemento ? ` (${complemento})` : ''}`
+        : '';
+
+      // 1. Salvar no Supabase
+      const { data: orderData, error: orderError } = await supabase
+        .from('pedidos')
+        .insert([{
+          restaurante_id: restaurante?.id,
+          cliente_nome: clienteNome,
+          cliente_telefone: telefoneCli,
+          itens: cart,
+          total: totalPrice,
+          status: 'pendente',
+          pago: false,
+          tipo_entrega: tipoEntrega,
+          mesa: tipoEntrega === 'local' ? mesa : null,
+          endereco_entrega: enderecoFormatado
+        }])
+        .select()
+        .single();
+
+      if (orderError) {
+        console.error("Erro ao salvar pedido:", orderError);
+      } else if (orderData) {
+        const savedOrdersStr = localStorage.getItem('menuzen_meus_pedidos') || '[]';
+        const savedOrders = JSON.parse(savedOrdersStr);
+        if (!savedOrders.includes(orderData.id)) {
+          savedOrders.push(orderData.id);
+          localStorage.setItem('menuzen_meus_pedidos', JSON.stringify(savedOrders));
+        }
+      }
+
+      // 2. Gerar texto do WhatsApp
+      let text = `*Novo Pedido - #${orderData?.id?.substring(0, 5) || 'Novo'}*\n`;
+      
+      if (tipoEntrega === 'local') {
+        text += `📍 *Pedido na Mesa:* ${mesa || 'Não informada'}\n`;
+        text += `👤 *Cliente:* ${clienteNome}\n\n`;
+      } else {
+        text += `🛵 *Entrega para:* ${clienteNome}\n`;
+        text += `📞 *WhatsApp:* ${telefoneCli}\n`;
+        text += `📍 *Endereço:* ${enderecoFormatado}\n\n`;
+      }
+
+      text += `*Resumo do Pedido:*\n`;
+      
+      cart.forEach(item => {
+        text += `${item.quantidade}x ${item.produto.nome} - R$ ${(item.produto.preco * item.quantidade).toFixed(2)}\n`;
+      });
+      text += `\n*Total:* R$ ${totalPrice.toFixed(2)}`;
+
+      const telefone = restaurante?.whatsapp || '';
+      if (!telefone) {
+         alert("Este restaurante ainda não configurou um número de WhatsApp para receber pedidos.");
+         return;
+      }
+      
+      const foneNumerico = telefone.replace(/\D/g, '');
+      const encodedText = encodeURIComponent(text);
+      
+      // 3. Limpar carrinho e fechar modal
+      setCart([]);
+      setIsCheckout(false);
+      setIsModalOpen(false);
+
+      // 4. Abrir WhatsApp
+      window.open(`https://wa.me/${foneNumerico}?text=${encodedText}`, '_blank');
+    } catch (err) {
+      console.error("Erro no processamento do pedido:", err);
+      alert("Ocorreu um erro ao processar seu pedido. Tente novamente.");
+    }
   };
 
   if (loading) {
@@ -397,7 +543,7 @@ export default function PublicMenuPage(props: PageProps) {
               <span className="text-[10px] font-medium">Início</span>
           </button>
           
-          <button onClick={() => alert("Em breve")} className={`flex flex-col items-center gap-1 transition-colors ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
+          <button onClick={() => setIsMyOrdersModalOpen(true)} className={`flex flex-col items-center gap-1 transition-colors ${isLight ? 'text-slate-500 hover:text-slate-900' : 'text-slate-400 hover:text-white'}`}>
               <ListOrdered className="w-6 h-6" />
               <span className="text-[10px] font-medium">Pedidos</span>
           </button>
@@ -427,7 +573,7 @@ export default function PublicMenuPage(props: PageProps) {
                        <ShoppingCart className="w-5 h-5" style={{ color: primaryColor }} />
                        Seu Pedido
                    </h2>
-                   <button onClick={() => setIsModalOpen(false)} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200' : 'text-slate-400 hover:text-white bg-white/5 hover:bg-white/10'}`}>
+                   <button onClick={() => { setIsModalOpen(false); setIsCheckout(false); }} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200' : 'text-slate-400 hover:text-white bg-white/5 hover:bg-white/10'}`}>
                       <X className="w-5 h-5" />
                    </button>
                 </div>
@@ -437,6 +583,120 @@ export default function PublicMenuPage(props: PageProps) {
                       <div className={`text-center py-8 ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
                          <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-20" />
                          <p>Sua sacola está vazia.</p>
+                      </div>
+                   ) : isCheckout ? (
+                      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 p-1">
+                         {/* Toggle Entrega */}
+                         <div className={`flex p-1 rounded-2xl border ${isLight ? 'bg-slate-100 border-slate-200' : 'bg-white/5 border-white/10'}`}>
+                            <button 
+                               onClick={() => setTipoEntrega('delivery')}
+                               className={`flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${tipoEntrega === 'delivery' ? (isLight ? 'bg-white text-slate-900 shadow-sm' : 'bg-white/10 text-white shadow-lg') : (isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-500 hover:text-slate-300')}`}
+                            >
+                               🛵 Entrega em Casa
+                            </button>
+                            <button 
+                               onClick={() => setTipoEntrega('local')}
+                               className={`flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${tipoEntrega === 'local' ? (isLight ? 'bg-white text-slate-900 shadow-sm' : 'bg-white/10 text-white shadow-lg') : (isLight ? 'text-slate-500 hover:text-slate-700' : 'text-slate-500 hover:text-slate-300')}`}
+                            >
+                               🍽️ Comer no Local
+                            </button>
+                         </div>
+
+                         {tipoEntrega === 'local' ? (
+                            <div className="space-y-4">
+                               <div>
+                                  <label className={`block text-xs font-bold uppercase tracking-widest mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                                     Seu Nome Completo *
+                                  </label>
+                                  <input 
+                                     type="text"
+                                     value={clienteNome}
+                                     onChange={(e) => setClienteNome(e.target.value)}
+                                     placeholder="Ex: João da Silva"
+                                     className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                  />
+                               </div>
+                               <div>
+                                  <label className={`block text-xs font-bold uppercase tracking-widest mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                                     Número da Mesa (Opcional)
+                                  </label>
+                                  <input 
+                                     type="text"
+                                     value={mesa}
+                                     onChange={(e) => setMesa(e.target.value)}
+                                     placeholder="Ex: Mesa 05"
+                                     className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                  />
+                               </div>
+                            </div>
+                         ) : (
+                            <div className="space-y-4">
+                               <div>
+                                  <label className={`block text-xs font-bold uppercase tracking-widest mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                                     Seu Nome Completo *
+                                  </label>
+                                  <input 
+                                     type="text"
+                                     value={clienteNome}
+                                     onChange={(e) => setClienteNome(e.target.value)}
+                                     placeholder="Ex: João da Silva"
+                                     className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                  />
+                               </div>
+                               <div>
+                                  <label className={`block text-xs font-bold uppercase tracking-widest mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                                     WhatsApp (Celular) *
+                                  </label>
+                                  <input 
+                                     type="tel"
+                                     value={telefoneCli}
+                                     onChange={(e) => setTelefoneCli(e.target.value)}
+                                     placeholder="(00) 00000-0000"
+                                     className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                  />
+                               </div>
+                               
+                               <div className="pt-2">
+                                  <h4 className={`text-sm font-bold flex items-center gap-2 mb-4 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                                     <Home className="w-4 h-4" /> Endereço de Entrega
+                                  </h4>
+                                  <div className="space-y-4">
+                                     <div>
+                                        <input 
+                                           type="text"
+                                           value={rua}
+                                           onChange={(e) => setRua(e.target.value)}
+                                           placeholder="Rua / Avenida *"
+                                           className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                        />
+                                     </div>
+                                     <div className="grid grid-cols-2 gap-4">
+                                        <input 
+                                           type="text"
+                                           value={numero}
+                                           onChange={(e) => setNumero(e.target.value)}
+                                           placeholder="Nº *"
+                                           className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                        />
+                                        <input 
+                                           type="text"
+                                           value={bairro}
+                                           onChange={(e) => setBairro(e.target.value)}
+                                           placeholder="Bairro *"
+                                           className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                        />
+                                     </div>
+                                     <input 
+                                        type="text"
+                                        value={complemento}
+                                        onChange={(e) => setComplemento(e.target.value)}
+                                        placeholder="Complemento (Apt, Bloco...)"
+                                        className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all ${isLight ? 'bg-slate-50 border-slate-200 focus:ring-slate-200' : 'bg-white/5 border-white/10 focus:ring-white/10 text-white'}`}
+                                     />
+                                  </div>
+                               </div>
+                            </div>
+                         )}
                       </div>
                    ) : (
                       cart.map(item => (
@@ -474,9 +734,26 @@ export default function PublicMenuPage(props: PageProps) {
                         <div className={`w-full py-4 rounded-xl flex items-center justify-center text-center font-semibold cursor-not-allowed border ${isLight ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-white/5 text-slate-400 border-white/10'}`}>
                            Falta {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format((restaurante.pedido_minimo || 0) - totalPrice)} para o pedido mínimo
                         </div>
+                      ) : isCheckout ? (
+                        <div className="flex gap-3">
+                           <button 
+                              onClick={() => setIsCheckout(false)}
+                              className={`flex-1 py-4 rounded-xl font-bold text-lg transition-all ${isLight ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-white/5 text-slate-300 hover:bg-white/10'}`}
+                           >
+                              Voltar para Sacola
+                           </button>
+                           <button 
+                              disabled={!clienteNome || (tipoEntrega === 'delivery' && (!rua || !numero || !bairro || !telefoneCli))}
+                              onClick={enviarPedidoWhatsApp}
+                              className="flex-[2] py-4 rounded-xl flex items-center justify-center gap-2 text-white font-bold text-lg transition-transform hover:scale-[1.02] active:scale-95 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                              style={{ backgroundColor: primaryColor }}
+                           >
+                              Confirmar Pedido
+                           </button>
+                        </div>
                       ) : (
                         <button 
-                           onClick={enviarPedidoWhatsApp}
+                           onClick={() => setIsCheckout(true)}
                            className="w-full py-4 rounded-xl flex items-center justify-center gap-2 text-white font-bold text-lg transition-transform hover:scale-[1.02] active:scale-95 shadow-xl"
                            style={{ backgroundColor: primaryColor }}
                         >
@@ -551,6 +828,85 @@ export default function PublicMenuPage(props: PageProps) {
                          <p className={`text-base leading-relaxed ${isLight ? 'text-slate-900' : 'text-white'}`}>Não informado</p>
                       )}
                    </div>
+                </div>
+             </div>
+          </div>
+       )}
+
+       {/* My Orders Modal */}
+       {isMyOrdersModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
+             <div className={`w-full max-w-lg sm:border sm:rounded-3xl rounded-t-3xl overflow-hidden flex flex-col h-[85vh] sm:h-auto sm:max-h-[90vh] shadow-2xl animate-in slide-in-from-bottom-5 ${isLight ? 'bg-white border-slate-200' : 'bg-[#111] border-white/10'}`}>
+                <div className={`flex items-center justify-between p-5 border-b shrink-0 ${isLight ? 'border-slate-100' : 'border-white/5'}`}>
+                   <h2 className="text-xl font-bold flex items-center gap-2 text-inherit">
+                       <ListOrdered className="w-5 h-5" style={{ color: primaryColor }} />
+                       Meus Pedidos
+                   </h2>
+                   <button onClick={() => setIsMyOrdersModalOpen(false)} className={`p-2 rounded-full transition-colors ${isLight ? 'text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200' : 'text-slate-400 hover:text-white bg-white/5 hover:bg-white/10'}`}>
+                      <X className="w-5 h-5" />
+                   </button>
+                </div>
+
+                <div className="overflow-y-auto p-5 space-y-4">
+                   {meusPedidos.length === 0 ? (
+                      <div className={`text-center py-8 ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
+                         <ListOrdered className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                         <p>Nenhum pedido recente neste restaurante.</p>
+                      </div>
+                   ) : (
+                      meusPedidos.map(pedido => (
+                         <div key={pedido.id} className={`p-4 rounded-xl border flex flex-col ${isLight ? 'bg-slate-50 border-slate-200' : 'bg-[#0f0f0f] border-white/10'}`}>
+                            <div className="flex justify-between items-start mb-2">
+                               <div className="font-bold text-lg text-inherit">
+                                  #{pedido.id.substring(0, 8).toUpperCase()}
+                               </div>
+                               <span className={`px-2 flex-shrink-0 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${
+                                   pedido.status === 'pendente' ? 'bg-indigo-500/10 text-indigo-400' :
+                                   pedido.status === 'preparando' ? 'bg-orange-500/10 text-orange-400' :
+                                   pedido.status === 'concluido' ? 'bg-emerald-500/10 text-emerald-400' :
+                                   pedido.status === 'cancelado' ? 'bg-red-500/10 text-red-500' :
+                                   'bg-slate-500/10 text-slate-400'
+                               }`}>
+                                  {pedido.status}
+                               </span>
+                            </div>
+                            <div className={`text-xs mb-3 font-medium ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                               {new Date(pedido.created_at).toLocaleString('pt-BR')}
+                            </div>
+                            <div className="space-y-1 mb-4 flex-1">
+                               {pedido.itens?.map((item: any, i: number) => (
+                                  <div key={i} className={`text-sm ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
+                                     {item.quantidade}x {item.produto?.nome}
+                                  </div>
+                                ))}
+                            </div>
+                            <div className={`text-sm font-bold mb-4 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                               Total: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pedido.total)}
+                            </div>
+
+                            {pedido.status === 'pendente' ? (
+                               <button 
+                                  onClick={() => {
+                                     if(confirm('Deseja realmente cancelar este pedido?')) {
+                                        cancelarMeuPedido(pedido.id);
+                                     }
+                                  }}
+                                  className="w-full py-3 rounded-lg border border-red-500 text-red-500 font-bold hover:bg-red-500/10 transition-colors"
+                               >
+                                  Cancelar Pedido
+                               </button>
+                            ) : pedido.status === 'cancelado' ? (
+                               <div className="w-full py-3 rounded-lg border border-red-500/20 bg-red-500/10 text-red-400 font-bold text-center text-sm">
+                                  Pedido Cancelado
+                               </div>
+                            ) : (
+                               <div className={`w-full p-3 rounded-lg text-xs font-bold text-center leading-relaxed ${isLight ? 'bg-slate-100 text-slate-500' : 'bg-white/5 text-slate-400'}`}>
+                                  Pedido em produção.<br/>Entre em contato com a loja para alterações.
+                               </div>
+                            )}
+                         </div>
+                      ))
+                   )}
                 </div>
              </div>
           </div>
